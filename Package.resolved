@@ -30,11 +30,11 @@
       },
       {
         "package": "ShellOut",
-        "repositoryURL": "https://github.com/JohnSundell/ShellOut.git",
+        "repositoryURL": "https://github.com/Nef10/ShellOut.git",
         "state": {
           "branch": null,
-          "revision": "e1577acf2b6e90086d01a6d5e2b8efdaae033568",
-          "version": "2.3.0"
+          "revision": "38237fd663f1cb45eb92d41a308d9c77be77a319",
+          "version": "2.3.1"
         }
       },
       {

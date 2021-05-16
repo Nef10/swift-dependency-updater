@@ -23,8 +23,8 @@ let package = Package(
             .upToNextMinor(from: "0.3.1")
         ),
         .package(
-            url: "https://github.com/JohnSundell/ShellOut.git",
-            from: "2.0.0"
+            url: "https://github.com/Nef10/ShellOut.git",
+            .upToNextMajor(from: "2.3.1")
         ),
         .package(
             url: "https://github.com/onevcat/Rainbow.git",
