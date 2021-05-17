@@ -8,7 +8,7 @@ struct PackageDependency: Decodable {
     let url: URL
 }
 
-enum DependencyRequirement: Decodable {
+enum DependencyRequirement: Decodable, Equatable {
 
     case exact(version: Version)
     case revision(revision: String)
@@ -63,7 +63,7 @@ enum DependencyRequirement: Decodable {
     }
 }
 
-enum PackageDescriptionError: Error {
+enum PackageDescriptionError: Error, Equatable {
     case loadingFailed(String)
     case parsingFailed(String, String)
 }
