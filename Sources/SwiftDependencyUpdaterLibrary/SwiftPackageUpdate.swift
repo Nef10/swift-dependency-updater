@@ -2,7 +2,7 @@ import Foundation
 import Releases
 import ShellOut
 
-enum SwiftPackageUpdateError: Error {
+enum SwiftPackageUpdateError: Error, Equatable {
     case loadingFailed(String)
     case parsingNumberFailed(String)
     case parsingNumberMismatch(String, Int, Int)

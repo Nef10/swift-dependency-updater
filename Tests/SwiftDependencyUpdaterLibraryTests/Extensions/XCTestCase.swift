@@ -3,9 +3,9 @@ import XCTest
 
 extension XCTestCase {
 
-    func temporaryFileURL() -> URL {
+    func temporaryFileURL(in folder: URL? = nil, name: String? = nil) -> URL {
         let directory = NSTemporaryDirectory()
-        let url = URL(fileURLWithPath: directory).appendingPathComponent(UUID().uuidString)
+        let url = (folder ?? URL(fileURLWithPath: directory)).appendingPathComponent(name ?? UUID().uuidString)
 
         addTeardownBlock {
             let fileManager = FileManager.default
@@ -45,6 +45,21 @@ extension XCTestCase {
             XCTFail("Error writing creating folder: \(error)")
         }
         return folder
+    }
+
+    func assert<T, E: Error & Equatable>(_ expression: @autoclosure () throws -> T, throws expectedError: E, in file: StaticString = #file, line: UInt = #line) {
+        var caughtError: Error?
+
+        XCTAssertThrowsError(try expression(), file: file, line: line) {
+            caughtError = $0
+        }
+
+        guard let error = caughtError as? E else {
+            XCTFail("Unexpected error type, got \(type(of: caughtError!)) instead of \(E.self)", file: file, line: line)
+            return
+        }
+
+        XCTAssertEqual(error, expectedError, file: file, line: line)
     }
 
 }
