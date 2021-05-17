@@ -83,4 +83,9 @@ class ResolvedPackageTests: XCTestCase {
         XCTAssertEqual("\(version)", "0.0.0 (abc, branch: main)")
     }
 
+    func testResolvedPackageErrorString() {
+        XCTAssertEqual("\(ResolvedPackageError.readingFailed("abc").localizedDescription)", "Could not read Package.resolved file: abc")
+        XCTAssertEqual("\(ResolvedPackageError.parsingFailed("abc", "def").localizedDescription)", "Could not parse package data: abc\n\nPackage Data: def")
+    }
+
 }
