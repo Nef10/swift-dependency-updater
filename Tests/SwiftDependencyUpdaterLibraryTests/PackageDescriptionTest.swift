@@ -29,7 +29,7 @@ class PackageDescriptionTest: XCTestCase {
         #endif
     }
 
-     func testParsing() {
+    func testParsing() {
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: TestUtils.packageSwiftFileContent)
@@ -67,6 +67,18 @@ class PackageDescriptionTest: XCTestCase {
         XCTAssertEqual(result.dependencies[7].name, "h")
         XCTAssertEqual(result.dependencies[7].url, URL(string: "https://github.com/h/h.git")!)
         XCTAssertEqual(result.dependencies[7].requirement, .range(lowerBound: try! Version(string: "2.2.3"), upperBound: try! Version(string: "2.2.7")))
-     }
+    }
+
+    func testPackageDescriptionErrorString() {
+        XCTAssertEqual("\(PackageDescriptionError.loadingFailed("abc").localizedDescription)", "Could not get package data, swift package dump-package failed: abc")
+        XCTAssertEqual("\(PackageDescriptionError.parsingFailed("abc", "def").localizedDescription)", "Could not parse package data: abc\n\nPackage Data: def")
+    }
+
+    func testDependencyRequirementString() {
+        XCTAssertEqual("\(DependencyRequirement.exact(version: try! Version(string: "0.1.2")))", "0.1.2")
+        XCTAssertEqual("\(DependencyRequirement.revision(revision: "abc"))", "abc")
+        XCTAssertEqual("\(DependencyRequirement.branch(name: "def"))", "def")
+        XCTAssertEqual("\(DependencyRequirement.range(lowerBound: try! Version(string: "1.0.4"), upperBound: try! Version(string: "1.3.4")))", "1.0.4..<1.3.4")
+    }
 
 }
