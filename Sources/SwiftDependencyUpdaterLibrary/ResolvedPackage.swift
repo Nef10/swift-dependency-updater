@@ -41,7 +41,7 @@ private struct Wrapper: Decodable {
     let object: ResolvedPackage
 }
 
-enum ResolvedPackageError: Error {
+enum ResolvedPackageError: Error, Equatable {
     case readingFailed(String)
     case parsingFailed(String, String)
 }
