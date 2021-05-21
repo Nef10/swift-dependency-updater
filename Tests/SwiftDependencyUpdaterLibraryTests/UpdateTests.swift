@@ -19,6 +19,12 @@ class UpdateTests: XCTestCase {
         XCTAssertEqual(result, .skipped)
     }
 
+    func testGetUpdateNoUpdate() {
+        let version = try! Version(string: "1.2.3")
+        let result = try! Update.getUpdate(name: "ABC", currentVersion: version, swiftPackageUpdate: nil, latestRelease: nil)
+        XCTAssertNil(result)
+    }
+
     func testGetUpdateSwiftPackageUpdate() {
         let oldVersion = try! Version(string: "0.1.2")
         let newVersion = try! Version(string: "1.2.3")
