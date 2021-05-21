@@ -1,7 +1,7 @@
 import Foundation
 import Releases
 
-enum UpdateError: Error {
+enum UpdateError: Error, Equatable {
     case resolvedVersionNotFound(String, Version, Version)
     case updatedVersionNotFound(String, Version, Version)
 }
