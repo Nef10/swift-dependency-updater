@@ -1,5 +1,14 @@
 enum TestUtils {
 
+    static let emptyPackageResolvedFileContent = """
+        {
+            "object": {
+                "pins": []
+            },
+            "version": 1
+        }
+        """
+
     static let packageResolvedFileContent = """
         {
             "object": {
@@ -35,6 +44,29 @@ enum TestUtils {
             },
             "version": 1
         }
+        """
+
+    static let emptyPackageSwiftFileContent = """
+        // swift-tools-version:5.2
+
+        import PackageDescription
+
+        let package = Package(
+            name: "Name",
+            products: [
+                .library(
+                    name: "Name",
+                    targets: ["Name"]
+                ),
+            ],
+            dependencies: [],
+            targets: [
+                .target(
+                    name: "Name",
+                    dependencies: []
+                ),
+            ]
+        )
         """
 
     static let packageSwiftFileContent = """
