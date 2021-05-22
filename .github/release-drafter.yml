@@ -11,7 +11,9 @@ categories:
     labels:
       - 'bug'
   - title: '🧰 Maintenance'
-    label: 'refactoring'
+    labels:
+      - 'refactoring'
+      - 'dependencies'
 exclude-labels:
   - 'skip-changelog'
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
