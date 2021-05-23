@@ -14,8 +14,8 @@ mint install Nef10/swift-dependency-updater
 ### Swift Package Manager
 ```
 git clone https://github.com/Nef10/swift-dependency-updater.git
-$ cd swift-dependency-updater
-$ swift run swift-dependency-updater
+cd swift-dependency-updater
+swift run swift-dependency-updater
 ```
 
 ## Usage
