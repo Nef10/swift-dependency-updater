@@ -44,6 +44,10 @@ struct Dependency {
                 update: update)
         }
     }
+
+    func update(in folder: URL) throws {
+        try update?.execute(for: self, in: folder)
+    }
 }
 
 extension Dependency: CustomStringConvertible {

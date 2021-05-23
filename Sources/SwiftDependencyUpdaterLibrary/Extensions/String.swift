@@ -14,4 +14,15 @@ extension String {
         }
     }
 
+    func matchingStringsWithRange(regex: NSRegularExpression) -> [[(string: String, range: NSRange)?]] {
+        let nsString = self as NSString
+        let results = regex.matches(in: self, options: [], range: NSRange(self.startIndex..., in: self))
+        return results.map { result in
+            (0..<result.numberOfRanges).map { result.range(at: $0).location != NSNotFound
+                ? (string: nsString.substring(with: result.range(at: $0)), range: result.range(at: $0))
+                : nil
+            }
+        }
+    }
+
 }

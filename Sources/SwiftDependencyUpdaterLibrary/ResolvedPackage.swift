@@ -13,6 +13,14 @@ struct ResolvedVersion: Decodable {
     let revision: String
     let version: Version?
 
+    public var versionNumberOrRevision: String {
+        if let version = version {
+            return "\(version)"
+        } else {
+            return "\(revision)"
+        }
+    }
+
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         branch = try container.decode(String?.self, forKey: .branch)
