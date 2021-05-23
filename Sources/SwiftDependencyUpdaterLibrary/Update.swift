@@ -1,5 +1,6 @@
 import Foundation
 import Releases
+import ShellOut
 
 enum UpdateError: Error, Equatable {
     case resolvedVersionNotFound(String, Version, Version)
@@ -36,6 +37,30 @@ enum Update: Equatable {
             return .withoutChangingRequirements(update.newVersion)
         } else {
             return nil
+        }
+    }
+
+    func execute(for dependency: Dependency, in folder: URL) throws {
+        switch self {
+        case let .withChangingRequirements(version):
+            print("Updating \(dependency.name): \(dependency.resolvedVersion.versionNumberOrRevision) -> \(version)".bold)
+            let swiftPackage = SwiftPackage(in: folder)
+            let packageUpdate = try swiftPackage.performUpdate(self, of: dependency)
+            print("Updated Package.swift".green)
+            if packageUpdate {
+                try shellOut(to: "swift", arguments: ["package", "update", dependency.name, "--package-path", "\"\(folder.path)\"" ])
+                print("Resolved to new version".green)
+            } else {
+                try shellOut(to: "swift", arguments: ["package", "update", "resolve", "--package-path", "\"\(folder.path)\"" ])
+                print("Resolved Version".green)
+            }
+        case let .withoutChangingRequirements(version):
+            print("Updating \(dependency.name): \(dependency.resolvedVersion.versionNumberOrRevision) -> \(version)".bold)
+            try shellOut(to: "swift", arguments: ["package", "update", dependency.name, "--package-path", "\"\(folder.path)\"" ])
+            print("Resolved to new version".green)
+        default:
+            // Do nothing
+            break
         }
     }
 }
