@@ -67,7 +67,6 @@ struct SwiftPackage {
         } catch {
             throw SwiftPackageError.readFailed(error.localizedDescription)
         }
-
     }
 
     private func write(_ string: String) throws {
