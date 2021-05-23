@@ -22,6 +22,10 @@ $ swift run swift-dependency-updater
 
 ### Locally
 
+#### Update dependencies:
+
+`swift-dependency-updater [update] [<folder>] [--keep-requirements]`
+
 #### List all dependencies and possible updates:
 
 `swift-dependency-updater list [<folder>] [--exclude-indirect] [--updates-only]`
