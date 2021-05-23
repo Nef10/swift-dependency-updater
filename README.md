@@ -34,6 +34,10 @@ $ swift run swift-dependency-updater
 
 Run `swift-dependency-updater --help` for a full list of supported commands, and `swift-dependency-updater help <subcommand>` for detailed help on a specific command.
 
+## Limitation
+
+Currently dependencies specified with either `.branch(_ name:)` or `.revision(_ ref:)` are not supported.
+
 ## Inspiration
 
 The tool was inspired by [vintage](https://github.com/vinhnx/vintage), [spm-dependencies-checker](https://github.com/sbertix/spm-dependencies-checker), and [swift-package-dependencies-check](https://github.com/MarcoEidinger/swift-package-dependencies-check).
