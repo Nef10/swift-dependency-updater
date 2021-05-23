@@ -1,3 +1,6 @@
+import Foundation
+@testable import SwiftDependencyUpdaterLibrary
+
 enum TestUtils {
 
     static let emptyPackageResolvedFileContent = """
@@ -133,5 +136,11 @@ enum TestUtils {
             ]
         )
         """
+
+    static func resolvedVersion(_ version: String) -> ResolvedVersion {
+        let decoder = JSONDecoder()
+        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"\(version)\"}".data(using: .utf8)!
+        return try! decoder.decode(ResolvedVersion.self, from: data)
+    }
 
 }
