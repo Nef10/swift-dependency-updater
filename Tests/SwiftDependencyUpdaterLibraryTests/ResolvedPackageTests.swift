@@ -37,7 +37,6 @@ class ResolvedPackageTests: XCTestCase {
     }
 
     func testParsing() {
-
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.resolved")
         createFile(at: file, content: TestUtils.packageResolvedFileContent)
@@ -81,6 +80,18 @@ class ResolvedPackageTests: XCTestCase {
         data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"0.0.0\"}".data(using: .utf8)!
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "0.0.0 (abc, branch: main)")
+    }
+
+    func testVersionNumberOrRevision() {
+        let decoder = JSONDecoder()
+
+        var data = "{\"revision\": \"abc\", \"branch\": null, \"version\": null}".data(using: .utf8)!
+        var version = try! decoder.decode(ResolvedVersion.self, from: data)
+        XCTAssertEqual("\(version.versionNumberOrRevision)", "abc")
+
+        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"1.2.3\"}".data(using: .utf8)!
+        version = try! decoder.decode(ResolvedVersion.self, from: data)
+        XCTAssertEqual("\(version.versionNumberOrRevision)", "1.2.3")
     }
 
     func testResolvedPackageErrorString() {

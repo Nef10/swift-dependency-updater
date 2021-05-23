@@ -5,6 +5,8 @@ enum SwiftPackageError: Error, Equatable {
     case invalidUpdate(String, Update)
     case resultCountMismatch(String, Int)
     case noResultMatch(String, [String?])
+    case readFailed(String)
+    case writeFailed(String)
 }
 
 struct SwiftPackage {
@@ -18,7 +20,7 @@ struct SwiftPackage {
     }
 
     func performUpdate(_ update: Update, of dependency: Dependency) throws -> Bool {
-        guard case let .withChangingRequirements(updatedVersion) = update else {
+        guard case var .withChangingRequirements(updatedVersion) = update else {
             throw SwiftPackageError.invalidUpdate(dependency.name, update)
         }
 
@@ -48,9 +50,8 @@ struct SwiftPackage {
             string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
             packageUpdate = true
         } else if matches[12] != nil, let version = matches[13] {
-            var newVersion = updatedVersion
-            newVersion.patch += 1
-            string = nsString.replacingCharacters(in: version.range, with: "\(newVersion)")
+            updatedVersion.patch += 1
+            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
             packageUpdate = true
         } else {
             throw SwiftPackageError.noResultMatch(dependency.name, matches.map { $0?.string })
@@ -61,11 +62,20 @@ struct SwiftPackage {
     }
 
     private func read() throws -> String {
-        try String(contentsOf: url, encoding: .utf8)
+        do {
+            return try String(contentsOf: url, encoding: .utf8)
+        } catch {
+            throw SwiftPackageError.readFailed(error.localizedDescription)
+        }
+
     }
 
     private func write(_ string: String) throws {
-        try string.write(to: url, atomically: true, encoding: .utf8)
+        do {
+            try string.write(to: url, atomically: true, encoding: .utf8)
+        } catch {
+            throw SwiftPackageError.writeFailed(error.localizedDescription)
+        }
     }
 
 }
@@ -79,6 +89,10 @@ extension SwiftPackageError: LocalizedError {
             return "Finding version requirement in Package.swift failed for \(name): Got \(count) instead of 1 result"
         case let .noResultMatch(name, results):
             return "Finding version requirement in Package.swift failed for \(name). Findings: \(results)"
+        case let .readFailed(error):
+            return "Failed to read Package.swift file: \(error)"
+        case let .writeFailed(error):
+            return "Failed to write Package.swift file: \(error)"
         }
     }
 }
