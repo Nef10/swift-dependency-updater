@@ -34,6 +34,12 @@ $ swift run swift-dependency-updater
 
 Run `swift-dependency-updater --help` for a full list of supported commands, and `swift-dependency-updater help <subcommand>` for detailed help on a specific command.
 
+### Completion
+
+Thanks to the [swift-argument-parser](https://github.com/apple/swift-argument-parser) you can generate [autocompletion scripts](https://github.com/apple/swift-argument-parser/blob/main/Documentation/07%20Completion%20Scripts.md) via `swift-dependency-updater --generate-completion-script {zsh|bash|fish}`. The exact command for your shell may vary, but for example for zsh with ~/.zfunctions in your fpath you can use:
+
+`swift-dependency-updater --generate-completion-script zsh > ~/.zfunctions/_swift-dependency-updater`
+
 ## Limitation
 
 Currently dependencies specified with either `.branch(_ name:)` or `.revision(_ ref:)` are not supported.
