@@ -1,5 +1,6 @@
 import Foundation
 import Releases
+import ShellOut
 
 struct ResolvedVersion: Decodable {
 
@@ -50,6 +51,7 @@ private struct Wrapper: Decodable {
 }
 
 enum ResolvedPackageError: Error, Equatable {
+    case resolvingFailed(String)
     case readingFailed(String)
     case parsingFailed(String, String)
 }
@@ -62,6 +64,12 @@ struct ResolvedPackage: Decodable {
     let dependencies: [ResolvedDependency]
 
     static func loadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
+         do {
+            try shellOut(to: "swift", arguments: ["package", "resolve", "--package-path", "\"\(folder.path)\"" ])
+        } catch {
+            let error = error as! ShellOutError // swiftlint:disable:this force_cast
+            throw ResolvedPackageError.resolvingFailed(error.message)
+        }
         let data = try readResolvedPackageData(from: folder)
         let decoder = JSONDecoder()
         do {
@@ -86,6 +94,8 @@ struct ResolvedPackage: Decodable {
 extension ResolvedPackageError: LocalizedError {
     public var errorDescription: String? {
         switch self {
+        case let .resolvingFailed(error):
+            return "Running swift package resolved failed: \(error)"
         case let .readingFailed(error):
             return "Could not read Package.resolved file: \(error)"
         case let .parsingFailed(error, packageData):

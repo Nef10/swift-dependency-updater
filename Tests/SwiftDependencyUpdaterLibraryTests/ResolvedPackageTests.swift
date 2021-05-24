@@ -6,40 +6,30 @@ class ResolvedPackageTests: XCTestCase {
 
     func testEmptyFolder() {
         let folder = emptyFolderURL()
-        #if os(Linux)
         assert(
             try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.readingFailed("The operation could not be completed. No such file or directory")
+            throws: ResolvedPackageError.resolvingFailed("error: root manifest not found")
         )
-        #else
-        assert(
-            try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file.")
-        )
-        #endif
     }
 
     func testInvalidFile() {
         let folder = emptyFolderURL()
-        let file = temporaryFileURL(in: folder, name: "Package.resolved")
-        createFile(at: file, content: "\n")
-        #if os(Linux)
+        let resolvedFile = temporaryFileURL(in: folder, name: "Package.resolved")
+        createFile(at: resolvedFile, content: "\n")
+        let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
+        createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
         assert(
             try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.parsingFailed("The operation could not be completed. The data isn’t in the correct format.", "\n")
+            throws: ResolvedPackageError.resolvingFailed("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue: malformed")
         )
-        #else
-        assert(
-            try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.parsingFailed("The data couldn’t be read because it isn’t in the correct format.", "\n")
-        )
-        #endif
     }
 
     func testParsing() {
         let folder = emptyFolderURL()
-        let file = temporaryFileURL(in: folder, name: "Package.resolved")
-        createFile(at: file, content: TestUtils.packageResolvedFileContent)
+        let resolvedFile = temporaryFileURL(in: folder, name: "Package.resolved")
+        createFile(at: resolvedFile, content: TestUtils.packageResolvedFileContent)
+        let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
+        createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
         let result = try! ResolvedPackage.loadResolvedPackage(from: folder)
         XCTAssertEqual(result.dependencies.count, 3)
 
@@ -95,6 +85,7 @@ class ResolvedPackageTests: XCTestCase {
     }
 
     func testResolvedPackageErrorString() {
+        XCTAssertEqual("\(ResolvedPackageError.resolvingFailed("abc").localizedDescription)", "Running swift package resolved failed: abc")
         XCTAssertEqual("\(ResolvedPackageError.readingFailed("abc").localizedDescription)", "Could not read Package.resolved file: abc")
         XCTAssertEqual("\(ResolvedPackageError.parsingFailed("abc", "def").localizedDescription)", "Could not parse package data: abc\n\nPackage Data: def")
     }
