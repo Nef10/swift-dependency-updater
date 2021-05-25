@@ -42,4 +42,23 @@ class DependencyTests: XCTestCase {
         XCTAssertEqual("\(dependency.branchNameForUpdate)", "swift-dependency-updater/test-space-special1-characters")
     }
 
+     func testChangeDescription() {
+        let decoder = JSONDecoder()
+        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
+        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let url = URL(string: "https://github.com/Name/abc.git")!
+
+        var dependency = Dependency(name: "ABC", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)
+        XCTAssertEqual("\(dependency.changeDescription)", "")
+
+        dependency = Dependency(name: "ABC", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: .skipped)
+        XCTAssertEqual("\(dependency.changeDescription)", "")
+
+        dependency = Dependency(name: "ABC", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: .withoutChangingRequirements(try! Version(string: "1.4.3")))
+        XCTAssertEqual("\(dependency.changeDescription)", "Bump ABC from 1.2.3 to 1.4.3")
+
+        dependency = Dependency(name: "ABC", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: .withChangingRequirements(try! Version(string: "2.0.3")))
+        XCTAssertEqual("\(dependency.changeDescription)", "Bump ABC from 1.2.3 to 2.0.3")
+    }
+
 }

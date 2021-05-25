@@ -18,6 +18,17 @@ struct Dependency {
         "swift-dependency-updater/\(name.components(separatedBy: CharacterSet.alphanumerics.inverted).joined(separator: "-").lowercased())"
     }
 
+    var changeDescription: String {
+        switch update {
+        case let .withoutChangingRequirements(version):
+            return "Bump \(name) from \(resolvedVersion.versionNumberOrRevision) to \(version)"
+        case let .withChangingRequirements(version):
+            return "Bump \(name) from \(resolvedVersion.versionNumberOrRevision) to \(version)"
+        default:
+            return ""
+        }
+    }
+
     static func loadDependencies(from folder: URL) throws -> [Dependency] {
         let packageDescription = try PackageDescription.loadPackageDescription(from: folder)
         let resolvedPackage = try ResolvedPackage.loadResolvedPackage(from: folder)

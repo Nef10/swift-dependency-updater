@@ -41,17 +41,6 @@ class GitHubUpdate {
         return remoteURL
     }
 
-    private static func changeDescription(for dependency: Dependency) -> String {
-        switch dependency.update {
-        case let .withoutChangingRequirements(version):
-            return "Bump \(dependency.name) from \(dependency.resolvedVersion.versionNumberOrRevision) to \(version)"
-        case let .withChangingRequirements(version):
-            return "Bump \(dependency.name) from \(dependency.resolvedVersion.versionNumberOrRevision) to \(version)"
-        default:
-            fatalError("Invalid update passed to GitHubUpdate")
-        }
-    }
-
     func execute() throws {
         print("Detected slug: \(slug), baseBranch: \(baseBranch) and remote name: \(remoteName)".italic)
         try setupGit()
@@ -68,10 +57,10 @@ class GitHubUpdate {
             }
             try createBranch(name: branchName)
             try $0.update(in: folder)
-            try commit(message: Self.changeDescription(for: $0))
+            try commit(message: $0.changeDescription)
             try pushBranch(name: branchName)
             if !remoteBranchExist {
-                try createPullRequest(branchName: branchName, title: Self.changeDescription(for: $0))
+                try createPullRequest(branchName: branchName, title: $0.changeDescription)
             }
             try backToBaseBranch()
         }
