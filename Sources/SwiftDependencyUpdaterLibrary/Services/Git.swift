@@ -40,8 +40,8 @@ class Git {
     }
 
     private func setupGit() throws {
-        try shellOut(to: "git", arguments: ["config", "--global", "user.name ", "swift-dependency-updater"], at: folder.path)
-        try shellOut(to: "git", arguments: ["config", "--global", "user.email", "\\<\\>"], at: folder.path)
+        try shellOut(to: "git", arguments: ["config", "--local", "user.name ", "swift-dependency-updater"], at: folder.path)
+        try shellOut(to: "git", arguments: ["config", "--local", "user.email", "\\<\\>"], at: folder.path)
     }
 
     func backToBaseBranch() throws {
