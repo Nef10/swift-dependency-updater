@@ -14,6 +14,10 @@ struct Dependency {
     let resolvedVersion: ResolvedVersion
     let update: Update?
 
+    var branchNameForUpdate: String {
+        "swift-dependency-updater/\(name.components(separatedBy: CharacterSet.alphanumerics.inverted).joined(separator: "-").lowercased())"
+    }
+
     static func loadDependencies(from folder: URL) throws -> [Dependency] {
         let packageDescription = try PackageDescription.loadPackageDescription(from: folder)
         let resolvedPackage = try ResolvedPackage.loadResolvedPackage(from: folder)

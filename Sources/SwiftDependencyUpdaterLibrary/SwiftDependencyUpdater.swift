@@ -6,7 +6,7 @@ public struct SwiftDependencyUpdater: ParsableCommand {
         commandName: "swift-dependency-updater",
         abstract: "A CLI tool to update Swift Pacakge Manager dependencies",
         version: "0.0.2",
-        subcommands: [List.self, UpdateCommand.self],
+        subcommands: [List.self, UpdateCommand.self, GitHub.self],
         defaultSubcommand: UpdateCommand.self
 
     )

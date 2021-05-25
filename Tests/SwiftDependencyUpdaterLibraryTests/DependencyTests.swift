@@ -32,4 +32,14 @@ class DependencyTests: XCTestCase {
         Rainbow.enabled = originalValue
     }
 
+    func testBranchNameForUpdate() {
+        let decoder = JSONDecoder()
+        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
+        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let url = URL(string: "https://github.com/Name/abc.git")!
+
+        let dependency = Dependency(name: "test space&special1%characters", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)
+        XCTAssertEqual("\(dependency.branchNameForUpdate)", "swift-dependency-updater/test-space-special1-characters")
+    }
+
 }
