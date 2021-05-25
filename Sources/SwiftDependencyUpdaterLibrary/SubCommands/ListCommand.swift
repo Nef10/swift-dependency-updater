@@ -1,9 +1,9 @@
 import ArgumentParser
 import Foundation
 
-struct List: ParsableCommand {
+struct ListCommand: ParsableCommand {
 
-    static var configuration = CommandConfiguration(abstract: "Lists all dependencies and possible updates")
+    static var configuration = CommandConfiguration(commandName: "list", abstract: "Lists all dependencies and possible updates")
 
     @Argument(help: "Path of the swift package") var folder: String = "."
     @ArgumentParser.Flag(help: "Do not include indirect dependencies.") private var excludeIndirect: Bool = false
