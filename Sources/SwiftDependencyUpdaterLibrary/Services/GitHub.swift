@@ -4,12 +4,24 @@ import FoundationNetworking
 #endif
 import Rainbow
 
+protocol URLSessionProvider {
+    func myUploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionUploadTaskProvider
+}
+
+protocol URLSessionUploadTaskProvider {
+    func resume()
+}
+
 class GitHub {
 
     private let git: Git
+    private let token: String
+    private let session: URLSessionProvider
 
-    init(git: Git) {
+    init(git: Git, token: String = ProcessInfo.processInfo.environment["TOKEN"]!, urlSession session: URLSessionProvider = URLSession.shared) {
         self.git = git
+        self.token = token
+        self.session = session
     }
 
     func createPullRequest(branchName: String, title: String) throws {
@@ -24,13 +36,12 @@ class GitHub {
             "maintainer_can_modify": true
         ]
         var request = URLRequest(url: URL(string: "https://api.github.com/repos/\(git.slug)/pulls")!)
-        let session = URLSession.shared
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("application/vnd.github.v3+json", forHTTPHeaderField: "Accept")
-        request.setValue("token \(ProcessInfo.processInfo.environment["TOKEN"]!)", forHTTPHeaderField: "Authorization")
+        request.setValue("token \(token)", forHTTPHeaderField: "Authorization")
         let parameters = try JSONSerialization.data(withJSONObject: parameterArray, options: [])
-        let task = session.uploadTask(with: request, from: parameters) { data, response, error in
+        let task = session.myUploadTask(with: request, from: parameters) { data, response, error in
             self.handleCreatePullRequestResponse(data: data, response: response, error: error)
             group.leave()
         }
@@ -62,4 +73,13 @@ class GitHub {
         print("Created Pull Request".green)
     }
 
+}
+
+extension URLSession: URLSessionProvider {
+    func myUploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionUploadTaskProvider {
+        uploadTask(with: request, from: bodyData, completionHandler: completionHandler)
+    }
+}
+
+extension URLSessionUploadTask: URLSessionUploadTaskProvider {
 }
