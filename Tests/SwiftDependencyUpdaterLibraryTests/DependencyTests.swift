@@ -11,9 +11,7 @@ class DependencyTests: XCTestCase {
     }
 
     func testDependencyString() {
-        let decoder = JSONDecoder()
-        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
-        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let resolvedVersion = TestUtils.resolvedVersion("1.2.3")
         let update = Update.skipped
         let requirement = DependencyRequirement.exact(version: try! Version(string: "1.2.3"))
 
@@ -33,9 +31,7 @@ class DependencyTests: XCTestCase {
     }
 
     func testBranchNameForUpdate() {
-        let decoder = JSONDecoder()
-        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
-        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let resolvedVersion = TestUtils.resolvedVersion("1.2.3")
         let url = URL(string: "https://github.com/Name/abc.git")!
 
         let dependency = Dependency(name: "test space&special1%characters", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)
@@ -43,9 +39,7 @@ class DependencyTests: XCTestCase {
     }
 
      func testChangeDescription() {
-        let decoder = JSONDecoder()
-        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
-        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let resolvedVersion = TestUtils.resolvedVersion("1.2.3")
         let url = URL(string: "https://github.com/Name/abc.git")!
 
         var dependency = Dependency(name: "ABC", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)

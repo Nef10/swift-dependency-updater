@@ -177,9 +177,7 @@ class GitHubCommandTests: XCTestCase {
         let folder = emptyFolderURL()
         let gitHub = MockGitHub(expectation: gitHubPRExpectation, branchName: "swift-dependency-updater/depname", title: "")
         let git = MockGit()
-        let decoder = JSONDecoder()
-        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
-        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let resolvedVersion = TestUtils.resolvedVersion("1.2.3")
         let url = URL(string: "https://github.com/Name/abc.git")!
         let dependency = Dependency(name: "depNAme", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)
         let dependencies = [dependency]
@@ -210,9 +208,7 @@ class GitHubCommandTests: XCTestCase {
         let folder = emptyFolderURL()
         let gitHub = MockGitHub(expectation: gitHubPRExpectation, branchName: "swift-dependency-updater/depname", title: "")
         let git = MockGit()
-        let decoder = JSONDecoder()
-        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
-        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let resolvedVersion = TestUtils.resolvedVersion("1.2.3")
         let url = URL(string: "https://github.com/Name/abc.git")!
         let dependency = Dependency(name: "depNAme", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)
         let dependencies = [dependency]
@@ -243,9 +239,7 @@ class GitHubCommandTests: XCTestCase {
         let folder = emptyFolderURL()
         let gitHub = MockGitHub(expectation: gitHubPRExpectation, branchName: "swift-dependency-updater/depname", title: "")
         let git = MockGit()
-        let decoder = JSONDecoder()
-        let data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"1.2.3\"}".data(using: .utf8)!
-        let resolvedVersion = try! decoder.decode(ResolvedVersion.self, from: data)
+        let resolvedVersion = TestUtils.resolvedVersion("1.2.3")
         let url = URL(string: "https://github.com/Name/abc.git")!
         let dependency = Dependency(name: "depNAme", url: url, requirement: nil, resolvedVersion: resolvedVersion, update: nil)
         let dependencies = [dependency]
