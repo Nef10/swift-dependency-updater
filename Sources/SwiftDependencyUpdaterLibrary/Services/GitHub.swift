@@ -12,13 +12,18 @@ protocol URLSessionUploadTaskProvider {
     func resume()
 }
 
-class GitHub {
+protocol GitHubProvider {
+    init(git: GitProvider, token: String, urlSession: URLSessionProvider )
+    func createPullRequest(branchName: String, title: String) throws
+}
 
-    private let git: Git
+class GitHub: GitHubProvider {
+
+    private let git: GitProvider
     private let token: String
     private let session: URLSessionProvider
 
-    init(git: Git, token: String = ProcessInfo.processInfo.environment["TOKEN"]!, urlSession session: URLSessionProvider = URLSession.shared) {
+    required init(git: GitProvider, token: String = ProcessInfo.processInfo.environment["TOKEN"]!, urlSession session: URLSessionProvider = URLSession.shared) {
         self.git = git
         self.token = token
         self.session = session

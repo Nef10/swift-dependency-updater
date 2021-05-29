@@ -2,7 +2,22 @@ import Foundation
 import Rainbow
 import ShellOut
 
-class Git {
+protocol GitProvider {
+    var remoteName: String { get }
+    var baseBranch: String { get }
+    var slug: String { get }
+
+    init(in folder: URL) throws
+    func backToBaseBranch() throws
+    func commit(message: String) throws
+    func pushBranch(name: String) throws
+    func removeLocalBranch(name: String) throws
+    func createBranch(name: String) throws
+    func doesRemoteBranchExist(_ name: String) -> Bool
+    func doesLocalBranchExist(_ name: String) -> Bool
+}
+
+class Git: GitProvider {
 
     private let folder: URL
 
@@ -10,7 +25,7 @@ class Git {
     let baseBranch: String
     let slug: String
 
-    init(in folder: URL) throws {
+    required init(in folder: URL) throws {
         self.folder = folder
         (remoteName, baseBranch) = try Self.getGitInfo(in: folder)
         slug = try Self.getSlug(in: folder)
