@@ -34,11 +34,61 @@ swift run swift-dependency-updater
 
 Run `swift-dependency-updater --help` for a full list of supported commands, and `swift-dependency-updater help <subcommand>` for detailed help on a specific command.
 
-### Completion
+#### Completion
 
 Thanks to the [swift-argument-parser](https://github.com/apple/swift-argument-parser) you can generate [autocompletion scripts](https://github.com/apple/swift-argument-parser/blob/main/Documentation/07%20Completion%20Scripts.md) via `swift-dependency-updater --generate-completion-script {zsh|bash|fish}`. The exact command for your shell may vary, but for example for zsh with ~/.zfunctions in your fpath you can use:
 
 `swift-dependency-updater --generate-completion-script zsh > ~/.zfunctions/_swift-dependency-updater`
+
+### GitHub
+
+The swift-dependency-updater can automatically create pull requests on GitHub for each outdated dependency by running `swift-dependency-updater github [<folder>] [--keep-requirements]`. This requires that a valid GitHub token is in the `TOKEN` environment variable as well as that git in checked out folder is authenticated (meaning `git push` will run sucessfully).
+
+While this can be ran locally, it is mostly intended to run via GitHub Actions. The only problem is that a push or a pull request created by an action will not trigger action runs itself, meaning that your CI will not run on a PR created by this command by default. There are [certain workarounds](https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#workarounds-to-trigger-further-workflow-runs) available. I recommend [creating a GitHub App to create tokens](https://github.com/peter-evans/create-pull-request/blob/main/docs/concepts-guidelines.md#authenticating-with-github-app-generated-tokens) as it provides the best security.
+
+Once this is done, you can create the action by using the following actions file and place it for example under `.github/workflows/swift-dependency-updater.yml` in your repository:
+
+```
+name: Swift Dependency Updater
+
+on:
+  schedule:
+    - cron:  '17 10 * * 5' # Run every Friday at 10:17 UTC
+  workflow_dispatch: # Allows to manually trigger the script
+
+permissions: # The workflow does not need speific permissions as we use a different token
+  contents: read
+
+jobs:
+  test:
+    name: Update Swift Dependencies
+    runs-on: ubuntu-latest # The action supports macOS-latest as well
+    steps:
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v1.3.0
+      with:
+        app_id: ${{ secrets.APP_ID }} # These two secrets need to be added
+        private_key: ${{ secrets.APP_PRIVATE_KEY }} # to your repository settings
+    - name: Checkout code
+      uses: actions/checkout@v2
+      with:
+        path: repo
+        fetch-depth: 0 # Fetching the whole repo is required to check if branches already exist
+        token: ${{ steps.generate_token.outputs.token }} # Checkout repo pre-configured with right token
+    - name: Install Swift
+      uses: fwal/setup-swift@v1.7.0
+    - name: Checkout swift-dependency-updater
+      uses: actions/checkout@v2
+      with:
+        repository: Nef10/swift-dependency-updater
+        path: swift-dependency-updater
+        ref: main # specify a version tag or use main to always use the latest code
+    - name: Run swift-dependency-updater
+      run: cd swift-dependency-updater && swift run swift-dependency-updater github ../repo
+      env:
+        TOKEN: ${{ steps.generate_token.outputs.token }} # Required to open the Pull Requests
+```
 
 ## Limitation
 
