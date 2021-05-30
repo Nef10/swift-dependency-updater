@@ -31,6 +31,9 @@ struct Dependency {
 
     static func loadDependencies(from folder: URL) throws -> [Dependency] {
         let packageDescription = try PackageDescription.loadPackageDescription(from: folder)
+        if packageDescription.dependencies.isEmpty {
+            return []
+        }
         let resolvedPackage = try ResolvedPackage.loadResolvedPackage(from: folder)
         let swiftPackageUpdates = try SwiftPackageUpdate.checkUpdates(in: folder)
         return try mergeDependencies(packageDescription: packageDescription, resolvedPackage: resolvedPackage, swiftPackageUpdates: swiftPackageUpdates)

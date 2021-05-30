@@ -116,7 +116,7 @@ class GitHubCommandTests: XCTestCase {
     func testInvalidPackage() {
         let folder = emptyFolderURL()
         let packageSwift = temporaryFileURL(in: folder, name: "Package.swift")
-        createFile(at: packageSwift, content: TestUtils.emptyPackageSwiftFileContent)
+        createFile(at: packageSwift, content: "// swift-tools-version:5.4")
         let packageResolved = temporaryFileURL(in: folder, name: "Package.resolved")
         createFile(at: packageResolved, content: TestUtils.emptyPackageResolvedFileContent)
         let result = outputFromExecutionWith(arguments: ["github", folder.path])
