@@ -36,7 +36,7 @@ struct SwiftPackageUpdate {
             return output
         } catch {
             let error = error as! ShellOutError // swiftlint:disable:this force_cast
-            throw PackageDescriptionError.loadingFailed(error.message)
+            throw SwiftPackageUpdateError.loadingFailed(error.message)
         }
     }
 

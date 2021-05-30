@@ -28,4 +28,17 @@ class SwiftPackageUpdateTests: XCTestCase {
         Rainbow.enabled = originalValue
     }
 
+    func testCheckUpdatesEmptyFolder() {
+        let folder = emptyFolderURL()
+        assert(
+            try SwiftPackageUpdate.checkUpdates(in: folder),
+            throws: SwiftPackageUpdateError.loadingFailed("error: root manifest not found")
+        )
+    }
+
+    func testCheckUpdatesEmptySwiftPackage() {
+        let folder = createEmptySwiftPackage()
+        XCTAssert(try! SwiftPackageUpdate.checkUpdates(in: folder).isEmpty)
+    }
+
 }
