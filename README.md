@@ -56,7 +56,7 @@ on:
     - cron:  '17 10 * * 5' # Run every Friday at 10:17 UTC
   workflow_dispatch: # Allows to manually trigger the script
 
-permissions: # The workflow does not need speific permissions as we use a different token
+permissions: # The workflow does not need specific permissions as we use a different token
   contents: read
 
 jobs:
