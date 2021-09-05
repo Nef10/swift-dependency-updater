@@ -8,7 +8,7 @@ import XCTest
 
 class GitHubTests: XCTestCase {
 
-    class MockURLSession: URLSessionProvider {
+    private class MockURLSession: URLSessionProvider {
 
         private let expectation: XCTestExpectation
 
@@ -39,7 +39,7 @@ class GitHubTests: XCTestCase {
 
     }
 
-    class MockURLSessionUploadTask: URLSessionUploadTaskProvider {
+    private class MockURLSessionUploadTask: URLSessionUploadTaskProvider {
 
         private let closure: () -> Void
 
