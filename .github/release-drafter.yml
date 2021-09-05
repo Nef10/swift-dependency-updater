@@ -32,5 +32,3 @@ template: |
   ## Changes
 
   $CHANGES
-  
-  *Before release check that the version number in [Sources/SwiftDependencyUpdaterLibrary/SwiftDependencyUpdater.swift](https://github.com/Nef10/swift-dependency-updater/blob/main/Sources/SwiftDependencyUpdaterLibrary/SwiftDependencyUpdater.swift) was updated*
