@@ -169,7 +169,7 @@ class SwiftPackageTests: XCTestCase {
         Rainbow.enabled = originalValue
     }
 
-    func setUpSamplePackage() -> (SwiftPackage, URL) {
+    private func setUpSamplePackage() -> (SwiftPackage, URL) {
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: TestUtils.packageSwiftFileContent)
