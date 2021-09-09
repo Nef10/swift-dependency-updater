@@ -25,7 +25,6 @@ struct SwiftPackage {
         }
 
         var string = try read()
-        let nsString = string as NSString
 
         // swiftlint:disable:next line_length
         let versionRegExString = "(\\.upToNextMajor\\s*\\(\\s*from\\s*:\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*\\))|(\\.upToNextMinor\\s*\\(\\s*from\\s*:\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*\\))|(\\.exact\\s*\\(\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*\\))|(from\\s*:\\s*\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\")|(\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"\\.\\.\\.\"([0-9]*\\.[0-9]*\\.[0-9]*)\")|(\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"\\.\\.<\"([0-9]*\\.[0-9]*\\.[0-9]*)\")"
@@ -39,19 +38,19 @@ struct SwiftPackage {
 
         var packageUpdate = false
         if matches[2] != nil, let version = matches[3] {
-            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
+            string = string.replacingCharacters(in: version.range, with: "\(updatedVersion)")
         } else if matches[4] != nil, let version = matches[5] {
-            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
+            string = string.replacingCharacters(in: version.range, with: "\(updatedVersion)")
         } else if matches[6] != nil, let version = matches[7] {
-            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
+            string = string.replacingCharacters(in: version.range, with: "\(updatedVersion)")
         } else if matches[8] != nil, let version = matches[9] {
-            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
+            string = string.replacingCharacters(in: version.range, with: "\(updatedVersion)")
         } else if matches[10] != nil, let version = matches[11] {
-            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
+            string = string.replacingCharacters(in: version.range, with: "\(updatedVersion)")
             packageUpdate = true
         } else if matches[12] != nil, let version = matches[13] {
             updatedVersion.patch += 1
-            string = nsString.replacingCharacters(in: version.range, with: "\(updatedVersion)")
+            string = string.replacingCharacters(in: version.range, with: "\(updatedVersion)")
             packageUpdate = true
         } else {
             throw SwiftPackageError.noResultMatch(dependency.name, matches.map { $0?.string })
