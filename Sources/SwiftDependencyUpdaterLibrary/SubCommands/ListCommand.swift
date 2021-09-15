@@ -6,8 +6,8 @@ struct ListCommand: ParsableCommand {
     static var configuration = CommandConfiguration(commandName: "list", abstract: "Lists all dependencies and possible updates")
 
     @Argument(help: "Path of the swift package") var folder: String = "."
-    @ArgumentParser.Flag(help: "Do not include indirect dependencies.") private var excludeIndirect: Bool = false
-    @ArgumentParser.Flag(name: .shortAndLong, help: "Do not include dependencies without update.") private var updatesOnly: Bool = false
+    @ArgumentParser.Flag(help: "Do not include indirect dependencies.") private var excludeIndirect = false
+    @ArgumentParser.Flag(name: .shortAndLong, help: "Do not include dependencies without update.") private var updatesOnly = false
 
     func run() throws {
         let folder = URL(fileURLWithPath: folder)
