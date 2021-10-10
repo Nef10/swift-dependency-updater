@@ -3,6 +3,13 @@ import Releases
 import ShellOut
 
 struct PackageDependency: Decodable {
+
+    enum CodingKeys: String, CodingKey {
+        case name = "identity"
+        case requirement
+        case url = "location"
+    }
+
     let name: String
     let requirement: DependencyRequirement
     let url: URL
@@ -69,7 +76,15 @@ enum PackageDescriptionError: Error, Equatable {
 }
 
 struct PackageDescription: Decodable {
-    let dependencies: [PackageDependency]
+
+    enum CodingKeys: String, CodingKey {
+        case dependencyMap = "dependencies"
+    }
+
+    let dependencyMap: [[String: [PackageDependency]]]
+    var dependencies: [PackageDependency] {
+        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+    }
 
     static func loadPackageDescription(from folder: URL) throws -> Self {
         let json = try readPackageDescription(from: folder)
@@ -79,7 +94,7 @@ struct PackageDescription: Decodable {
             let packageDescription = try decoder.decode(Self.self, from: data)
             return packageDescription
         } catch {
-            throw PackageDescriptionError.parsingFailed(error.localizedDescription, json)
+            throw PackageDescriptionError.parsingFailed(String(describing: error), json)
         }
     }
 

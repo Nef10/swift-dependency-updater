@@ -13,20 +13,21 @@ class PackageDescriptionTest: XCTestCase {
     }
 
     func testInvalidFile() {
+        var caughtError: Error?
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: "// swift-tools-version:5.4.0\n")
-        #if os(Linux)
-        assert(
-            try PackageDescription.loadPackageDescription(from: folder),
-            throws: PackageDescriptionError.loadingFailed("\(folder.path): error: malformed")
-        )
-        #else
-        assert(
-            try PackageDescription.loadPackageDescription(from: folder),
-            throws: PackageDescriptionError.loadingFailed("/private\(folder.path): error: malformed")
-        )
-        #endif
+
+        XCTAssertThrowsError(try PackageDescription.loadPackageDescription(from: folder)) {
+            caughtError = $0
+        }
+
+        guard let error = caughtError as? PackageDescriptionError, case let .loadingFailed(description) = error else {
+            XCTFail("Unexpected error, got \(type(of: caughtError!)) \(caughtError!)) instead of PackageDescriptionError.loadingFailed")
+            return
+        }
+
+        XCTAssert(description.contains("\(folder.path): error: malformed"))
     }
 
     func testParsing() {
