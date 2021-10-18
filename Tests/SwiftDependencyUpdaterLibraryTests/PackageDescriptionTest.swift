@@ -7,7 +7,7 @@ class PackageDescriptionTest: XCTestCase {
     func testEmptyFolder() {
         let folder = emptyFolderURL()
         assert(
-            try PackageDescription.loadPackageDescription(from: folder),
+            try PackageDescriptionFactory.loadPackageDescription(from: folder),
             throws: PackageDescriptionError.loadingFailed("error: root manifest not found")
         )
     }
@@ -18,7 +18,7 @@ class PackageDescriptionTest: XCTestCase {
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: "// swift-tools-version:5.4.0\n")
 
-        XCTAssertThrowsError(try PackageDescription.loadPackageDescription(from: folder)) {
+        XCTAssertThrowsError(try PackageDescriptionFactory.loadPackageDescription(from: folder)) {
             caughtError = $0
         }
 
@@ -34,7 +34,7 @@ class PackageDescriptionTest: XCTestCase {
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: TestUtils.packageSwiftFileContent)
-        let result = try! PackageDescription.loadPackageDescription(from: folder)
+        let result = try! PackageDescriptionFactory.loadPackageDescription(from: folder)
         XCTAssertEqual(result.dependencies.count, 8)
 
         XCTAssertEqual(result.dependencies[0].name, "a")

@@ -30,7 +30,7 @@ struct Dependency {
     }
 
     static func loadDependencies(from folder: URL) throws -> [Dependency] {
-        let packageDescription = try PackageDescription.loadPackageDescription(from: folder)
+        let packageDescription = try PackageDescriptionFactory.loadPackageDescription(from: folder)
         if packageDescription.dependencies.isEmpty {
             return []
         }
