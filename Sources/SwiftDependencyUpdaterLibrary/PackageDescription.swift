@@ -2,7 +2,29 @@ import Foundation
 import Releases
 import ShellOut
 
-struct PackageDependency: Decodable {
+protocol PackageDependency: Decodable {
+
+    var name: String { get }
+    var requirement: DependencyRequirement { get }
+    var url: URL { get }
+
+}
+
+private struct PackageDependencyV54: PackageDependency {
+
+    let name: String
+    let requirement: DependencyRequirement
+    let url: URL
+}
+
+private struct PackageDependencyV55: PackageDependency {
+
+    enum CodingKeys: String, CodingKey {
+        case name = "identity"
+        case requirement
+        case url = "location"
+    }
+
     let name: String
     let requirement: DependencyRequirement
     let url: URL
@@ -68,18 +90,47 @@ enum PackageDescriptionError: Error, Equatable {
     case parsingFailed(String, String)
 }
 
-struct PackageDescription: Decodable {
-    let dependencies: [PackageDependency]
+struct PackageDescriptionV54: PackageDescription {
 
-    static func loadPackageDescription(from folder: URL) throws -> Self {
+    enum CodingKeys: String, CodingKey {
+        case dependenciesArray = "dependencies"
+    }
+
+    private let dependenciesArray: [PackageDependencyV54]
+    var dependencies: [PackageDependency] {
+        dependenciesArray
+    }
+
+}
+
+struct PackageDescriptionV55: PackageDescription {
+
+    enum CodingKeys: String, CodingKey {
+        case dependencyMap = "dependencies"
+    }
+
+    private let dependencyMap: [[String: [PackageDependencyV55]]]
+    var dependencies: [PackageDependency] {
+        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+    }
+
+}
+
+enum PackageDescriptionFactory {
+    static func loadPackageDescription(from folder: URL) throws -> PackageDescription {
         let json = try readPackageDescription(from: folder)
         let data = json.data(using: .utf8)!
         let decoder = JSONDecoder()
         do {
-            let packageDescription = try decoder.decode(Self.self, from: data)
+            let packageDescription = try decoder.decode(PackageDescriptionV55.self, from: data)
             return packageDescription
         } catch {
-            throw PackageDescriptionError.parsingFailed(error.localizedDescription, json)
+            do {
+                let packageDescription = try decoder.decode(PackageDescriptionV54.self, from: data)
+                return packageDescription
+            } catch {
+            }
+            throw PackageDescriptionError.parsingFailed(String(describing: error), json)
         }
     }
 
@@ -92,6 +143,10 @@ struct PackageDescription: Decodable {
             throw PackageDescriptionError.loadingFailed(error.message)
         }
     }
+}
+
+protocol PackageDescription: Decodable {
+    var dependencies: [PackageDependency] { get }
 }
 
 extension PackageDescriptionError: LocalizedError {

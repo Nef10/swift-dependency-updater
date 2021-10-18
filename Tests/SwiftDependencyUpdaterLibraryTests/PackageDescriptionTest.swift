@@ -7,33 +7,34 @@ class PackageDescriptionTest: XCTestCase {
     func testEmptyFolder() {
         let folder = emptyFolderURL()
         assert(
-            try PackageDescription.loadPackageDescription(from: folder),
+            try PackageDescriptionFactory.loadPackageDescription(from: folder),
             throws: PackageDescriptionError.loadingFailed("error: root manifest not found")
         )
     }
 
     func testInvalidFile() {
+        var caughtError: Error?
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: "// swift-tools-version:5.4.0\n")
-        #if os(Linux)
-        assert(
-            try PackageDescription.loadPackageDescription(from: folder),
-            throws: PackageDescriptionError.loadingFailed("\(folder.path): error: malformed")
-        )
-        #else
-        assert(
-            try PackageDescription.loadPackageDescription(from: folder),
-            throws: PackageDescriptionError.loadingFailed("/private\(folder.path): error: malformed")
-        )
-        #endif
+
+        XCTAssertThrowsError(try PackageDescriptionFactory.loadPackageDescription(from: folder)) {
+            caughtError = $0
+        }
+
+        guard let error = caughtError as? PackageDescriptionError, case let .loadingFailed(description) = error else {
+            XCTFail("Unexpected error, got \(type(of: caughtError!)) \(caughtError!)) instead of PackageDescriptionError.loadingFailed")
+            return
+        }
+
+        XCTAssert(description.contains("\(folder.path): error: malformed"))
     }
 
     func testParsing() {
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: TestUtils.packageSwiftFileContent)
-        let result = try! PackageDescription.loadPackageDescription(from: folder)
+        let result = try! PackageDescriptionFactory.loadPackageDescription(from: folder)
         XCTAssertEqual(result.dependencies.count, 8)
 
         XCTAssertEqual(result.dependencies[0].name, "a")
