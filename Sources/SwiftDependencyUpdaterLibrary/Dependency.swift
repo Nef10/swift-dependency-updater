@@ -34,7 +34,7 @@ struct Dependency {
         if packageDescription.dependencies.isEmpty {
             return []
         }
-        let resolvedPackage = try ResolvedPackage.loadResolvedPackage(from: folder)
+        let resolvedPackage = try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)
         let swiftPackageUpdates = try SwiftPackageUpdate.checkUpdates(in: folder)
         return try mergeDependencies(packageDescription: packageDescription, resolvedPackage: resolvedPackage, swiftPackageUpdates: swiftPackageUpdates)
     }

@@ -6,10 +6,18 @@ class PackageDescriptionTest: XCTestCase {
 
     func testEmptyFolder() {
         let folder = emptyFolderURL()
-        assert(
-            try PackageDescriptionFactory.loadPackageDescription(from: folder),
-            throws: PackageDescriptionError.loadingFailed("error: root manifest not found")
-        )
+
+        XCTAssertThrowsError(try PackageDescriptionFactory.loadPackageDescription(from: folder)) {
+            guard let error = $0 as? PackageDescriptionError else {
+                XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(PackageDescriptionError.self)")
+                return
+            }
+            let errors = [
+                PackageDescriptionError.loadingFailed("error: root manifest not found"),
+                PackageDescriptionError.loadingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
+            ]
+            XCTAssert(errors.contains(error), "Received \(error) instead of expected error")
+        }
     }
 
     func testInvalidFile() {
@@ -26,8 +34,12 @@ class PackageDescriptionTest: XCTestCase {
             XCTFail("Unexpected error, got \(type(of: caughtError!)) \(caughtError!)) instead of PackageDescriptionError.loadingFailed")
             return
         }
+        let errors = [
+            "Missing or empty JSON output from manifest compilation",
+            "\(folder.path): error: malformed"
+        ]
 
-        XCTAssert(description.contains("\(folder.path): error: malformed"))
+        XCTAssert(errors.contains { description.contains($0) }, "Received \(description) instead of expected error")
     }
 
     func testParsing() {

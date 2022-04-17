@@ -4,12 +4,49 @@ import XCTest
 
 class ResolvedPackageTests: XCTestCase {
 
+    func testEmptyFolderResolve() {
+        let folder = emptyFolderURL()
+
+        XCTAssertThrowsError(try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)) {
+            guard let error = $0 as? ResolvedPackageError else {
+                XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(ResolvedPackageError.self)")
+                return
+            }
+            let errors = [
+                ResolvedPackageError.resolvingFailed("error: root manifest not found"),
+                ResolvedPackageError.resolvingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
+            ]
+            XCTAssert(errors.contains(error), "Received \(error) instead of expected error")
+        }
+    }
+
     func testEmptyFolder() {
         let folder = emptyFolderURL()
+
         assert(
             try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.resolvingFailed("error: root manifest not found")
+            throws: ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file.")
         )
+    }
+
+    func testInvalidFileResolve() {
+        let folder = emptyFolderURL()
+        let resolvedFile = temporaryFileURL(in: folder, name: "Package.resolved")
+        createFile(at: resolvedFile, content: "\n")
+        let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
+        createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
+
+        XCTAssertThrowsError(try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)) {
+            guard let error = $0 as? ResolvedPackageError else {
+                XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(ResolvedPackageError.self)")
+                return
+            }
+            if case let .resolvingFailed(errorMessage) = error {
+                XCTAssert(errorMessage.contains("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue"), "Received error message \(errorMessage) does not contain expected error")
+            } else {
+                XCTFail("Received errors is not of type resolvingFailed: \(error)")
+            }
+        }
     }
 
     func testInvalidFile() {
@@ -18,9 +55,10 @@ class ResolvedPackageTests: XCTestCase {
         createFile(at: resolvedFile, content: "\n")
         let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
+
         assert(
             try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.resolvingFailed("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue: malformed")
+            throws: ResolvedPackageError.parsingFailed("The data couldn’t be read because it isn’t in the correct format.", "\n")
         )
     }
 

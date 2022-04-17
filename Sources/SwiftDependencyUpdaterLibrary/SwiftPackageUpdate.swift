@@ -32,7 +32,7 @@ struct SwiftPackageUpdate {
 
     private static func readUpdates(in folder: URL) throws -> String {
          do {
-            let output = try shellOut(to: "swift", arguments: ["package", "update", "--dry-run", "--package-path", "\"\(folder.path)\"" ])
+            let output = try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", "--dry-run" ])
             return output
         } catch {
             let error = error as! ShellOutError // swiftlint:disable:this force_cast
