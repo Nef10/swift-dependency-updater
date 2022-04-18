@@ -30,6 +30,27 @@ private struct PackageDependencyV55: PackageDependency {
     let url: URL
 }
 
+private struct PackageDependencyV56: PackageDependency {
+
+    enum CodingKeys: String, CodingKey {
+        case name = "identity"
+        case requirement
+        case location
+    }
+
+    let name: String
+    let requirement: DependencyRequirement
+    let location: PackageLocation
+
+    var url: URL {
+        location.remote.first!
+    }
+}
+
+private struct PackageLocation: Decodable {
+    let remote: [URL]
+}
+
 enum DependencyRequirement: Decodable, Equatable {
 
     case exact(version: Version)
@@ -116,21 +137,39 @@ struct PackageDescriptionV55: PackageDescription {
 
 }
 
+struct PackageDescriptionV56: PackageDescription {
+
+    enum CodingKeys: String, CodingKey {
+        case dependencyMap = "dependencies"
+    }
+
+    private let dependencyMap: [[String: [PackageDependencyV56]]]
+    var dependencies: [PackageDependency] {
+        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+    }
+
+}
+
 enum PackageDescriptionFactory {
     static func loadPackageDescription(from folder: URL) throws -> PackageDescription {
         let json = try readPackageDescription(from: folder)
         let data = json.data(using: .utf8)!
         let decoder = JSONDecoder()
         do {
-            let packageDescription = try decoder.decode(PackageDescriptionV55.self, from: data)
+            let packageDescription = try decoder.decode(PackageDescriptionV56.self, from: data)
             return packageDescription
         } catch {
             do {
-                let packageDescription = try decoder.decode(PackageDescriptionV54.self, from: data)
+                let packageDescription = try decoder.decode(PackageDescriptionV55.self, from: data)
                 return packageDescription
             } catch {
+                do {
+                    let packageDescription = try decoder.decode(PackageDescriptionV54.self, from: data)
+                    return packageDescription
+                } catch {
+                    throw PackageDescriptionError.parsingFailed(String(describing: error), json)
+                }
             }
-            throw PackageDescriptionError.parsingFailed(String(describing: error), json)
         }
     }
 

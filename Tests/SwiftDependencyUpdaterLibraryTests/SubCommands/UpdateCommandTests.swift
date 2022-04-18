@@ -16,7 +16,11 @@ class UpdateCommandTests: XCTestCase {
         let result = outputFromExecutionWith(arguments: ["update", url.path])
         XCTAssertEqual(result.exitCode, 1)
         XCTAssertEqual(result.errorOutput, "")
-        XCTAssertEqual(result.output, "Could not get package data, swift package dump-package failed: error: root manifest not found")
+        let errors = [
+            "Could not get package data, swift package dump-package failed: error: root manifest not found",
+            "Could not get package data, swift package dump-package failed: error: Could not find Package.swift in this directory or any of its parent directories."
+        ]
+        XCTAssert(errors.contains(result.output), "Received \(result.output) instead of expected error")
     }
 
     func testInvalidPackage() {

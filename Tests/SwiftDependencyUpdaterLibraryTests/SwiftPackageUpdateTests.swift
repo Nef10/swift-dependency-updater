@@ -32,7 +32,10 @@ class SwiftPackageUpdateTests: XCTestCase {
         let folder = emptyFolderURL()
         assert(
             try SwiftPackageUpdate.checkUpdates(in: folder),
-            throws: SwiftPackageUpdateError.loadingFailed("error: root manifest not found")
+            throws: [
+                SwiftPackageUpdateError.loadingFailed("error: root manifest not found"),
+                SwiftPackageUpdateError.loadingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
+            ]
         )
     }
 

@@ -63,13 +63,17 @@ struct ResolvedPackage: Decodable {
 
     let dependencies: [ResolvedDependency]
 
-    static func loadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
+    static func resolveAndLoadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
          do {
             try shellOut(to: "swift", arguments: ["package", "resolve", "--package-path", "\"\(folder.path)\"" ])
         } catch {
             let error = error as! ShellOutError // swiftlint:disable:this force_cast
             throw ResolvedPackageError.resolvingFailed(error.message)
         }
+        return try loadResolvedPackage(from: folder)
+    }
+
+    static func loadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
         let data = try readResolvedPackageData(from: folder)
         let decoder = JSONDecoder()
         do {
