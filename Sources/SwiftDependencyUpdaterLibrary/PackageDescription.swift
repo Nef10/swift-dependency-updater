@@ -175,7 +175,7 @@ enum PackageDescriptionFactory {
 
     private static func readPackageDescription(from folder: URL) throws -> String {
         do {
-            let output = try shellOut(to: "swift", arguments: ["package", "dump-package", "--package-path", "\"\(folder.path)\"" ])
+            let output = try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "dump-package" ])
             return output
         } catch {
             let error = error as! ShellOutError // swiftlint:disable:this force_cast
