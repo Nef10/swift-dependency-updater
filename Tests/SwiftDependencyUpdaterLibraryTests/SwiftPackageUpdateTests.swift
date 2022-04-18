@@ -30,18 +30,13 @@ class SwiftPackageUpdateTests: XCTestCase {
 
     func testCheckUpdatesEmptyFolder() {
         let folder = emptyFolderURL()
-
-        XCTAssertThrowsError(try SwiftPackageUpdate.checkUpdates(in: folder)) {
-            guard let error = $0 as? SwiftPackageUpdateError else {
-                XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(SwiftPackageUpdateError.self)")
-                return
-            }
-            let errors = [
+        assert(
+            try SwiftPackageUpdate.checkUpdates(in: folder),
+            throws: [
                 SwiftPackageUpdateError.loadingFailed("error: root manifest not found"),
                 SwiftPackageUpdateError.loadingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
             ]
-            XCTAssert(errors.contains(error), "Received \(error) instead of expected error")
-        }
+        )
     }
 
     func testCheckUpdatesEmptySwiftPackage() {

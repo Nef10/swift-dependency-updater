@@ -7,17 +7,13 @@ class ResolvedPackageTests: XCTestCase {
     func testEmptyFolderResolve() {
         let folder = emptyFolderURL()
 
-        XCTAssertThrowsError(try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)) {
-            guard let error = $0 as? ResolvedPackageError else {
-                XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(ResolvedPackageError.self)")
-                return
-            }
-            let errors = [
+        assert(
+            try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder),
+            throws: [
                 ResolvedPackageError.resolvingFailed("error: root manifest not found"),
                 ResolvedPackageError.resolvingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
             ]
-            XCTAssert(errors.contains(error), "Received \(error) instead of expected error")
-        }
+        )
     }
 
     func testEmptyFolder() {
@@ -25,7 +21,10 @@ class ResolvedPackageTests: XCTestCase {
 
         assert(
             try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file.")
+            throws: [
+                ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file."),
+                ResolvedPackageError.readingFailed("The operation could not be completed. No such file or directory")
+            ]
         )
     }
 
@@ -42,7 +41,8 @@ class ResolvedPackageTests: XCTestCase {
                 return
             }
             if case let .resolvingFailed(errorMessage) = error {
-                XCTAssert(errorMessage.contains("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue"), "Received error message \(errorMessage) does not contain expected error")
+                XCTAssert(errorMessage.contains("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue"),
+                          "Received error message \(errorMessage) does not contain expected error")
             } else {
                 XCTFail("Received errors is not of type resolvingFailed: \(error)")
             }
@@ -58,7 +58,10 @@ class ResolvedPackageTests: XCTestCase {
 
         assert(
             try ResolvedPackage.loadResolvedPackage(from: folder),
-            throws: ResolvedPackageError.parsingFailed("The data couldn’t be read because it isn’t in the correct format.", "\n")
+            throws: [
+                ResolvedPackageError.parsingFailed("The data couldn’t be read because it isn’t in the correct format.", "\n"),
+                ResolvedPackageError.parsingFailed("The operation could not be completed. The data isn’t in the correct format.", "\n")
+            ]
         )
     }
 
