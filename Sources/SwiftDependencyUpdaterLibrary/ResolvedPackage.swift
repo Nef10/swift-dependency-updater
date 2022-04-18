@@ -65,7 +65,7 @@ struct ResolvedPackage: Decodable {
 
     static func resolveAndLoadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
          do {
-            try shellOut(to: "swift", arguments: ["package", "resolve", "--package-path", "\"\(folder.path)\"" ])
+            try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "resolve" ])
         } catch {
             let error = error as! ShellOutError // swiftlint:disable:this force_cast
             throw ResolvedPackageError.resolvingFailed(error.message)
