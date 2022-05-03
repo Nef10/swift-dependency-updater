@@ -45,15 +45,22 @@ enum Update: Equatable {
         case let .withChangingRequirements(version):
             print("Updating \(dependency.name): \(dependency.resolvedVersion.versionNumberOrRevision) -> \(version)".bold)
             let swiftPackage = SwiftPackage(in: folder)
-            let packageUpdate = try swiftPackage.performUpdate(self, of: dependency)
-            print("Updated Package.swift".green)
-            if packageUpdate {
-                try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", dependency.name ])
-                print("Resolved to new version".green)
-            } else {
-                try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", "resolve", ])
-                print("Resolved Version".green)
+            do {
+                let packageUpdate = try swiftPackage.performUpdate(self, of: dependency)
+                print("Updated Package.swift".green)
+                if packageUpdate {
+                    try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", dependency.name ])
+                    print("Resolved to new version".green)
+                } else {
+                    try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", "resolve", ])
+                    print("Resolved Version".green)
+                }
+            } catch SwiftPackageError.resultCountMismatch(let name, let count) where count == 0 {
+                print("Warning: Could not find version requirement for \(name) in Package.swift - this could be due to the dependency only beeing required on a specific platform.".yellow)
+            } catch {
+                throw error
             }
+
         case let .withoutChangingRequirements(version):
             print("Updating \(dependency.name): \(dependency.resolvedVersion.versionNumberOrRevision) -> \(version)".bold)
             try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", dependency.name, ])
