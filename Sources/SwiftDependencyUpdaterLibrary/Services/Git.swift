@@ -84,11 +84,19 @@ class Git: GitProvider {
     }
 
     func doesRemoteBranchExist(_ name: String) -> Bool {
-        doesBranchExist(ref: "refs/remotes/\(remoteName)/\(name)")
+        let result = doesBranchExist(ref: "refs/remotes/\(remoteName)/\(name)")
+        if result {
+            print("Branch \(name) already exists on the remote.".yellow)
+        }
+        return result
     }
 
     func doesLocalBranchExist(_ name: String) -> Bool {
-        doesBranchExist(ref: "refs/heads/\(name)")
+        let result = doesBranchExist(ref: "refs/heads/\(name)")
+        if result {
+            print("Branch \(name) already exists locally.".yellow)
+        }
+        return result
     }
 
     private func doesBranchExist(ref: String) -> Bool {

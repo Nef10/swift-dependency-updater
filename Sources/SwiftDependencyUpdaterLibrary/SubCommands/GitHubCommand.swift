@@ -16,11 +16,9 @@ struct GitHubCommand: ParsableCommand {
             let branchName = $0.branchNameForUpdate
             let remoteBranchExist = git.doesRemoteBranchExist(branchName)
             if remoteBranchExist {
-                print("Branch \(branchName) already exists on the remote.".yellow)
                 print("All changes in the branch will be overridden".yellow.bold)
             }
             if git.doesLocalBranchExist(branchName) {
-                print("Branch \(branchName) already exists locally.".yellow)
                 try git.removeLocalBranch(name: branchName)
             }
             try git.createBranch(name: branchName)
