@@ -11,7 +11,7 @@ struct UpdateCommand: ParsableCommand {
     func run() throws {
         let folder = URL(fileURLWithPath: folder)
         guard folder.hasDirectoryPath else {
-            print("Folder argument must be a directory.")
+            print("Folder argument must be a directory.".red)
             throw ExitCode.failure
         }
         do {
@@ -34,7 +34,7 @@ struct UpdateCommand: ParsableCommand {
                 }
             }
         } catch {
-            print(error.localizedDescription)
+            print(error.localizedDescription.red)
             throw ExitCode.failure
         }
     }
