@@ -30,7 +30,14 @@ struct UpdateCommand: ParsableCommand {
                 print("Everything is already up-to-date!".green)
             } else {
                 try dependencies.forEach {
-                    try $0.update(in: folder)
+                    do {
+                        try $0.update(in: folder)
+                    } catch let SwiftPackageError.resultCountMismatch(name, count) where count == 0 { // false positive, count is an integer swiftlint:disable:this empty_count
+                        print("Warning: Could not find version requirement for \(name) in Package.swift - " +
+                              "this could be due to the dependency only beeing required on a specific platform.".yellow)
+                    } catch {
+                        throw error
+                    }
                 }
             }
         } catch {
