@@ -16,21 +16,26 @@ struct GitHubCommand: ParsableCommand {
             let branchName = $0.branchNameForUpdate
             let remoteBranchExist = git.doesRemoteBranchExist(branchName)
             if remoteBranchExist {
-                print("Branch \(branchName) already exists on the remote.".yellow)
                 print("All changes in the branch will be overridden".yellow.bold)
             }
             if git.doesLocalBranchExist(branchName) {
-                print("Branch \(branchName) already exists locally.".yellow)
                 try git.removeLocalBranch(name: branchName)
             }
             try git.createBranch(name: branchName)
-            try $0.update(in: folder)
-            try git.commit(message: $0.changeDescription)
-            try git.pushBranch(name: branchName)
-            if !remoteBranchExist {
-                try gitHub.createPullRequest(branchName: branchName, title: $0.changeDescription)
+            do {
+                try $0.update(in: folder)
+                try git.commit(message: $0.changeDescription)
+                try git.pushBranch(name: branchName)
+                if !remoteBranchExist {
+                    try gitHub.createPullRequest(branchName: branchName, title: $0.changeDescription)
+                }
+                try git.backToBaseBranch()
+            } catch let SwiftPackageError.resultCountMismatch(name, count) where count == 0 { // false positive, count is an integer swiftlint:disable:this empty_count
+                print("Warning: Could not find version requirement for \(name) in Package.swift - " +
+                      "this could be due to the dependency only beeing required on a specific platform.".yellow)
+            } catch {
+                throw error
             }
-            try git.backToBaseBranch()
         }
     }
 
