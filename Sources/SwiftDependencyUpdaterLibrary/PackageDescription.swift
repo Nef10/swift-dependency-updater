@@ -97,10 +97,7 @@ enum DependencyRequirement: Decodable, Equatable {
             self = .range(lowerBound: lowerBound, upperBound: upperBound)
         default:
             throw DecodingError.dataCorrupted(
-                DecodingError.Context(
-                    codingPath: container.codingPath,
-                    debugDescription: "Unabled to decode enum"
-                )
+                DecodingError.Context(codingPath: container.codingPath, debugDescription: "Unabled to decode enum")
             )
         }
     }
