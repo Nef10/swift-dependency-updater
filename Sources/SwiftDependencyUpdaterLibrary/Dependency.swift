@@ -54,7 +54,7 @@ struct Dependency {
                 swiftPackageUpdate: swiftPackageUpdate,
                 latestRelease: latestRelease
             )
-            return Dependency(
+            return Self(
                 name: resolvedDependency.name,
                 url: resolvedDependency.url,
                 requirement: packageDependency?.requirement,

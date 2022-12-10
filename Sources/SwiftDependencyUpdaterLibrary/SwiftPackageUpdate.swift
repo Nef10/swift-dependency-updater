@@ -66,7 +66,7 @@ struct SwiftPackageUpdate {
             else {
                 throw SwiftPackageUpdateError.parsingDependencyFailed(output, dependencyMatch)
             }
-            result.append(SwiftPackageUpdate(name: name, oldVersion: oldVersion, newVersion: newVersion))
+            result.append(Self(name: name, oldVersion: oldVersion, newVersion: newVersion))
         }
         return result
     }
