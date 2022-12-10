@@ -20,7 +20,7 @@ let package = Package(
     dependencies: [
         .package(
             url: "https://github.com/apple/swift-argument-parser",
-            .upToNextMinor(from: "1.1.1")
+            .upToNextMinor(from: "1.2.0")
         ),
         .package(
             url: "https://github.com/Nef10/ShellOut.git",
