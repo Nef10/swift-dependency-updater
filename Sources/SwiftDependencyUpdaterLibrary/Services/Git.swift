@@ -43,10 +43,8 @@ class Git: GitProvider {
         let prefixes = ["git@github.com:", "https://github.com/"]
         let suffix = ".git"
         var remoteURL = try shellOut(to: "git", arguments: ["config", "--get", "remote.origin.url"], at: folder.path)
-        for prefix in prefixes {
-            if remoteURL.hasPrefix(prefix) {
-                remoteURL = String(remoteURL.dropFirst(prefix.count))
-            }
+        for prefix in prefixes where remoteURL.hasPrefix(prefix) {
+            remoteURL = String(remoteURL.dropFirst(prefix.count))
         }
         if remoteURL.hasSuffix(suffix) {
             remoteURL = String(remoteURL.dropLast(suffix.count))

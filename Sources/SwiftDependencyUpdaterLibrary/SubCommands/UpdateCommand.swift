@@ -14,6 +14,10 @@ struct UpdateCommand: ParsableCommand {
             print("Folder argument must be a directory.".red)
             throw ExitCode.failure
         }
+        try run(in: folder)
+    }
+
+    func run(in folder: URL) throws {
         do {
             var dependencies = try Dependency.loadDependencies(from: folder)
             dependencies = dependencies.filter { $0.update != nil && $0.update != .skipped }
