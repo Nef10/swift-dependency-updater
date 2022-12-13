@@ -14,10 +14,10 @@ enum Update: Equatable {
     case skipped
 
     static func getUpdate(name: String, currentVersion: Version?, swiftPackageUpdate: SwiftPackageUpdate?, latestRelease: Version?) throws -> Update? {
-        guard let currentVersion = currentVersion else {
+        guard let currentVersion else {
             return .skipped
         }
-        if let latestRelease = latestRelease, currentVersion != latestRelease {
+        if let latestRelease, currentVersion != latestRelease {
             if currentVersion < latestRelease {
                 if let update = swiftPackageUpdate {
                     if update.newVersion < latestRelease {

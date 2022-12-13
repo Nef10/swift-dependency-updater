@@ -58,28 +58,28 @@ class MockGit: GitProvider {
     }
 
     func commit(message: String) throws {
-        if let expectedCommitMessage = expectedCommitMessage {
+        if let expectedCommitMessage {
             XCTAssertEqual(expectedCommitMessage, message)
         }
         commitExpectation.fulfill()
     }
 
     func pushBranch(name: String) throws {
-        if let expectedBranchName = expectedBranchName {
+        if let expectedBranchName {
             XCTAssertEqual(expectedBranchName, name)
         }
         pushBranchExpectation.fulfill()
     }
 
     func removeLocalBranch(name: String) throws {
-        if let expectedBranchName = expectedBranchName {
+        if let expectedBranchName {
             XCTAssertEqual(expectedBranchName, name)
         }
         removeLocalBranchExpectation.fulfill()
     }
 
     func createBranch(name: String) throws {
-        if let expectedBranchName = expectedBranchName {
+        if let expectedBranchName {
             XCTAssertEqual(expectedBranchName, name)
         }
         createBranchExpectation.fulfill()
