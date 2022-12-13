@@ -15,7 +15,7 @@ struct ResolvedVersion: Decodable {
     let version: Version?
 
     public var versionNumberOrRevision: String {
-        if let version = version {
+        if let version {
             return "\(version)"
         } else {
             return "\(revision)"
@@ -110,7 +110,7 @@ extension ResolvedPackageError: LocalizedError {
 
 extension ResolvedVersion: CustomStringConvertible {
     public var description: String {
-        if let version = version {
+        if let version {
             return "\(version) (\(revision)\(branch != nil ? ", branch: \(branch!)" : ""))"
         } else {
             return "\(revision)\(branch != nil ? " (branch: \(branch!))" : "")"

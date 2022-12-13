@@ -57,20 +57,20 @@ class GitHub: GitHubProvider {
     private func handleCreatePullRequestResponse(data: Data?, response: URLResponse?, error: Error?) {
         guard let httpResponse = response as? HTTPURLResponse else {
             print("Error creating Pull Request: No HTTPURLResponse".red)
-            if let data = data, let dataString = String(data: data, encoding: .utf8) {
+            if let data, let dataString = String(data: data, encoding: .utf8) {
                 print("Data: \(dataString)")
             }
-            if let error = error {
+            if let error {
                 print("Error: \(error.localizedDescription)")
             }
             return
         }
         guard httpResponse.statusCode == 201 else {
             print("Error creating Pull Request: Got status code \(httpResponse.statusCode)".red)
-            if let data = data, let dataString = String(data: data, encoding: .utf8) {
+            if let data, let dataString = String(data: data, encoding: .utf8) {
                 print("Data: \(dataString)")
             }
-            if let error = error {
+            if let error {
                 print("Error: \(error.localizedDescription)")
             }
             return
