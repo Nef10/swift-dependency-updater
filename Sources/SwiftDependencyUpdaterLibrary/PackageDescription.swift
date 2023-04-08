@@ -153,16 +153,13 @@ enum PackageDescriptionFactory {
         let data = json.data(using: .utf8)!
         let decoder = JSONDecoder()
         do {
-            let packageDescription = try decoder.decode(PackageDescriptionV56.self, from: data)
-            return packageDescription
+            return try decoder.decode(PackageDescriptionV56.self, from: data)
         } catch {
             do {
-                let packageDescription = try decoder.decode(PackageDescriptionV55.self, from: data)
-                return packageDescription
+                return try decoder.decode(PackageDescriptionV55.self, from: data)
             } catch {
                 do {
-                    let packageDescription = try decoder.decode(PackageDescriptionV54.self, from: data)
-                    return packageDescription
+                    return try decoder.decode(PackageDescriptionV54.self, from: data)
                 } catch {
                     throw PackageDescriptionError.parsingFailed(String(describing: error), json)
                 }
@@ -172,8 +169,7 @@ enum PackageDescriptionFactory {
 
     private static func readPackageDescription(from folder: URL) throws -> String {
         do {
-            let output = try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "dump-package" ])
-            return output
+            return try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "dump-package" ])
         } catch {
             let error = error as! ShellOutError // swiftlint:disable:this force_cast
             throw PackageDescriptionError.loadingFailed(error.message)
