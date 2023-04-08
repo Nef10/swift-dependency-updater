@@ -24,8 +24,7 @@ extension Version {
         do {
             let allReleases = try Releases.versions(for: url)
             let relevantReleases = allReleases.withoutPreReleases()
-            let lastRelease = relevantReleases.max()
-            return lastRelease
+            return relevantReleases.max()
         } catch {
             throw ReleaseError.loadingFailed(url, error.localizedDescription)
         }

@@ -77,8 +77,7 @@ struct ResolvedPackage: Decodable {
         let data = try readResolvedPackageData(from: folder)
         let decoder = JSONDecoder()
         do {
-            let resolvedPackage = try decoder.decode(Wrapper.self, from: data).object
-            return resolvedPackage
+            return try decoder.decode(Wrapper.self, from: data).object
         } catch {
             throw ResolvedPackageError.parsingFailed(error.localizedDescription, String(decoding: data, as: UTF8.self))
         }
@@ -87,8 +86,7 @@ struct ResolvedPackage: Decodable {
     private static func readResolvedPackageData(from folder: URL) throws -> Data {
         let resolvedPackage = folder.appendingPathComponent("Package.resolved", isDirectory: false)
         do {
-            let contents = try Data(contentsOf: resolvedPackage)
-            return contents
+            return try Data(contentsOf: resolvedPackage)
         } catch {
             throw ResolvedPackageError.readingFailed(error.localizedDescription)
         }
