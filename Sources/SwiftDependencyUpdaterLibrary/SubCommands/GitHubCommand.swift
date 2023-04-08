@@ -5,8 +5,10 @@ struct GitHubCommand: ParsableCommand {
 
     static var configuration = CommandConfiguration(commandName: "github", abstract: "Updates dependencies and creates a PR for each one")
 
-    @Argument(help: "Path of the swift package") var folder: String = "."
-    @ArgumentParser.Flag(help: "Do not change version requirements in the Package.swift file.") private var keepRequirements = false
+    @Argument(help: "Path of the swift package")
+    var folder: String = "."
+    @ArgumentParser.Flag(help: "Do not change version requirements in the Package.swift file.")
+    private var keepRequirements = false
 
     static func update(_ dependencies: [Dependency], in folder: URL, git: GitProvider? = nil, gitHub: GitHubProvider? = nil) throws {
         let git = try git ?? Git(in: folder)

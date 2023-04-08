@@ -5,8 +5,10 @@ struct UpdateCommand: ParsableCommand {
 
     static var configuration = CommandConfiguration(commandName: "update", abstract: "Updates dependencies")
 
-    @Argument(help: "Path of the swift package") var folder: String = "."
-    @ArgumentParser.Flag(help: "Do not change version requirements in the Package.swift file.") private var keepRequirements = false
+    @Argument(help: "Path of the swift package")
+    var folder: String = "."
+    @ArgumentParser.Flag(help: "Do not change version requirements in the Package.swift file.")
+    private var keepRequirements = false
 
     func run() throws {
         let folder = URL(fileURLWithPath: folder)
