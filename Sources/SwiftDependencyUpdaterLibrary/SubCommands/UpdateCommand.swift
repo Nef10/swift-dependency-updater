@@ -27,9 +27,8 @@ struct UpdateCommand: ParsableCommand {
                 dependencies = dependencies.filter {
                     if case .withChangingRequirements = $0.update {
                         return false
-                    } else {
-                        return true
                     }
+                    return true
                 }
             }
             if dependencies.isEmpty {

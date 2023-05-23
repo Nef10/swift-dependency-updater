@@ -13,7 +13,7 @@ enum Update: Equatable {
     case withChangingRequirements(Version)
     case skipped
 
-    static func getUpdate(name: String, currentVersion: Version?, swiftPackageUpdate: SwiftPackageUpdate?, latestRelease: Version?) throws -> Update? {
+    static func getUpdate(name: String, currentVersion: Version?, swiftPackageUpdate: SwiftPackageUpdate?, latestRelease: Version?) throws -> Self? {
         guard let currentVersion else {
             return .skipped
         }
@@ -22,7 +22,8 @@ enum Update: Equatable {
                 if let update = swiftPackageUpdate {
                     if update.newVersion < latestRelease {
                         return .withChangingRequirements(latestRelease)
-                    } else if update.newVersion > latestRelease {
+                    }
+                    if update.newVersion > latestRelease {
                         throw UpdateError.updatedVersionNotFound(name, update.newVersion, latestRelease)
                     } else {
                         return .withoutChangingRequirements(update.newVersion)

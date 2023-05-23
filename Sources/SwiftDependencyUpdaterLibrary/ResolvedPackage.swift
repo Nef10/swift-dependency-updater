@@ -17,9 +17,8 @@ struct ResolvedVersion: Decodable {
     public var versionNumberOrRevision: String {
         if let version {
             return "\(version)"
-        } else {
-            return "\(revision)"
         }
+        return "\(revision)"
     }
 
     init(from decoder: Decoder) throws {
@@ -63,7 +62,7 @@ struct ResolvedPackage: Decodable {
 
     let dependencies: [ResolvedDependency]
 
-    static func resolveAndLoadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
+    static func resolveAndLoadResolvedPackage(from folder: URL) throws -> Self {
          do {
             try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "resolve" ])
         } catch {
@@ -73,7 +72,7 @@ struct ResolvedPackage: Decodable {
         return try loadResolvedPackage(from: folder)
     }
 
-    static func loadResolvedPackage(from folder: URL) throws -> ResolvedPackage {
+    static func loadResolvedPackage(from folder: URL) throws -> Self {
         let data = try readResolvedPackageData(from: folder)
         let decoder = JSONDecoder()
         do {
@@ -110,8 +109,7 @@ extension ResolvedVersion: CustomStringConvertible {
     public var description: String {
         if let version {
             return "\(version) (\(revision)\(branch != nil ? ", branch: \(branch!)" : ""))"
-        } else {
-            return "\(revision)\(branch != nil ? " (branch: \(branch!))" : "")"
         }
+        return "\(revision)\(branch != nil ? " (branch: \(branch!))" : "")"
     }
 }
