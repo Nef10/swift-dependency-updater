@@ -29,7 +29,7 @@ struct Dependency {
         }
     }
 
-    static func loadDependencies(from folder: URL) throws -> [Dependency] {
+    static func loadDependencies(from folder: URL) throws -> [Self] {
         let packageDescription = try PackageDescriptionFactory.loadPackageDescription(from: folder)
         if packageDescription.dependencies.isEmpty {
             return []
@@ -43,7 +43,7 @@ struct Dependency {
         packageDescription: PackageDescription,
         resolvedPackage: ResolvedPackage,
         swiftPackageUpdates: [SwiftPackageUpdate]
-    ) throws -> [Dependency] {
+    ) throws -> [Self] {
         try resolvedPackage.dependencies.map { resolvedDependency in
             let packageDependency = packageDescription.dependencies.first { $0.url == resolvedDependency.url }
             let swiftPackageUpdate = swiftPackageUpdates.first { $0.name == resolvedDependency.name }

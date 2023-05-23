@@ -25,7 +25,7 @@ struct SwiftPackageUpdate {
     let oldVersion: Version
     let newVersion: Version
 
-    static func checkUpdates(in folder: URL) throws -> [SwiftPackageUpdate] {
+    static func checkUpdates(in folder: URL) throws -> [Self] {
         let string = try readUpdates(in: folder)
         return try parseOutput(string)
     }
@@ -39,7 +39,7 @@ struct SwiftPackageUpdate {
         }
     }
 
-    private static func parseOutput(_ output: String) throws -> [SwiftPackageUpdate] {
+    private static func parseOutput(_ output: String) throws -> [Self] {
         let numberMatches = output.matchingStrings(regex: self.numberRegex)
         guard
             let match = numberMatches[safe: 0],
