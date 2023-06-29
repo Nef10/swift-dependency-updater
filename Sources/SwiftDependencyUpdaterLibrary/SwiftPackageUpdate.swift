@@ -52,7 +52,7 @@ struct SwiftPackageUpdate {
         guard dependencyMatches.count == number else {
             throw SwiftPackageUpdateError.parsingNumberMismatch(output, number, dependencyMatches.count)
         }
-        var result = [SwiftPackageUpdate]()
+        var result = [Self]()
         for dependencyMatch in dependencyMatches {
             guard
                 let name = dependencyMatch[safe: 1],
