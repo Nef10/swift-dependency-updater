@@ -39,6 +39,7 @@ jobs:
     name: Tests
     needs: get_os
     strategy:
+      fail-fast: false
       matrix:
         os:  ${{fromJson(needs.get_os.outputs.os_matrix)}}
         swift: ["5.6", "5.7", "5.8", "5.9"]
@@ -47,7 +48,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
     - name: Install Swift
-      uses: swift-actions/setup-swift@v1.24.0
+      uses: swift-actions/setup-swift@v1.25.0
       with:
         swift-version: ${{ matrix.swift }}
     - name: Run tests
