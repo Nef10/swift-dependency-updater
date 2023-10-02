@@ -38,11 +38,11 @@ class PackageDescriptionTest: XCTestCase {
         XCTAssert(errors.contains { description.contains($0) }, "Received \(description) instead of expected error")
     }
 
-    func testParsing() {
+    func testParsing() throws {
         let folder = emptyFolderURL()
         let file = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: file, content: TestUtils.packageSwiftFileContent)
-        let result = try! PackageDescriptionFactory.loadPackageDescription(from: folder)
+        let result = try PackageDescriptionFactory.loadPackageDescription(from: folder)
         XCTAssertEqual(result.dependencies.count, 8)
 
         XCTAssertEqual(result.dependencies[0].name, "a")

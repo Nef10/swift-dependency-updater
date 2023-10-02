@@ -47,8 +47,29 @@ private struct PackageDependencyV56: PackageDependency {
     }
 }
 
+private struct PackageDependencyV59: PackageDependency {
+
+    enum CodingKeys: String, CodingKey {
+        case name = "identity"
+        case requirement
+        case location
+    }
+
+    let name: String
+    let requirement: DependencyRequirement
+    let location: PackageLocationV59
+
+    var url: URL {
+        location.remote.first!.values.first!
+    }
+}
+
 private struct PackageLocation: Decodable {
     let remote: [URL]
+}
+
+private struct PackageLocationV59: Decodable {
+    let remote: [[String: URL]]
 }
 
 enum DependencyRequirement: Decodable, Equatable {
@@ -147,21 +168,38 @@ struct PackageDescriptionV56: PackageDescription {
 
 }
 
+struct PackageDescriptionV59: PackageDescription {
+
+    enum CodingKeys: String, CodingKey {
+        case dependencyMap = "dependencies"
+    }
+
+    private let dependencyMap: [[String: [PackageDependencyV59]]]
+    var dependencies: [PackageDependency] {
+        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+    }
+
+}
+
 enum PackageDescriptionFactory {
     static func loadPackageDescription(from folder: URL) throws -> PackageDescription {
         let json = try readPackageDescription(from: folder)
         let data = json.data(using: .utf8)!
         let decoder = JSONDecoder()
         do {
-            return try decoder.decode(PackageDescriptionV56.self, from: data)
+            return try decoder.decode(PackageDescriptionV54.self, from: data)
         } catch {
             do {
                 return try decoder.decode(PackageDescriptionV55.self, from: data)
             } catch {
                 do {
-                    return try decoder.decode(PackageDescriptionV54.self, from: data)
+                    return try decoder.decode(PackageDescriptionV56.self, from: data)
                 } catch {
-                    throw PackageDescriptionError.parsingFailed(String(describing: error), json)
+                    do {
+                        return try decoder.decode(PackageDescriptionV59.self, from: data)
+                    } catch {
+                        throw PackageDescriptionError.parsingFailed(String(describing: error), json)
+                    }
                 }
             }
         }

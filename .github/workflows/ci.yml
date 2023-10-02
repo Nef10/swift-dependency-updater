@@ -86,7 +86,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       - name: Install Swift
-        uses: swift-actions/setup-swift@v1.24.0
+        uses: swift-actions/setup-swift@v1.25.0
       - name: Install SwiftLint
         run: |
           curl -L https://github.com/realm/SwiftLint/releases/download/0.53.0/swiftlint_linux.zip -o swiftlint.zip
