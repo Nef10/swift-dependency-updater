@@ -34,14 +34,14 @@ struct Dependency {
         if packageDescription.dependencies.isEmpty {
             return []
         }
-        let resolvedPackage = try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)
+        let resolvedPackage = try ResolvedPackageParser.resolveAndLoadResolvedPackage(from: folder)
         let swiftPackageUpdates = try SwiftPackageUpdate.checkUpdates(in: folder)
         return try mergeDependencies(packageDescription: packageDescription, resolvedPackage: resolvedPackage, swiftPackageUpdates: swiftPackageUpdates)
     }
 
     private static func mergeDependencies(
         packageDescription: PackageDescription,
-        resolvedPackage: ResolvedPackage,
+        resolvedPackage: any ResolvedPackage,
         swiftPackageUpdates: [SwiftPackageUpdate]
     ) throws -> [Self] {
         try resolvedPackage.dependencies.map { resolvedDependency in
