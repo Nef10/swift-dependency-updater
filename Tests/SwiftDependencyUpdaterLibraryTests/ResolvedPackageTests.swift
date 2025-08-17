@@ -96,19 +96,19 @@ class ResolvedPackageTests: XCTestCase {
     func testResolvedVersionString() {
         let decoder = JSONDecoder()
 
-        var data = "{\"revision\": \"abc\", \"branch\": null, \"version\": null}".data(using: .utf8)!
+        var data = Data("{\"revision\": \"abc\", \"branch\": null, \"version\": null}".utf8)
         var version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "abc")
 
-        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": null}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": \"main\", \"version\": null}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "abc (branch: main)")
 
-        data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"0.0.0\"}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": null, \"version\": \"0.0.0\"}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "0.0.0 (abc)")
 
-        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"0.0.0\"}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"0.0.0\"}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "0.0.0 (abc, branch: main)")
     }
@@ -116,11 +116,11 @@ class ResolvedPackageTests: XCTestCase {
     func testVersionNumberOrRevision() {
         let decoder = JSONDecoder()
 
-        var data = "{\"revision\": \"abc\", \"branch\": null, \"version\": null}".data(using: .utf8)!
+        var data = Data("{\"revision\": \"abc\", \"branch\": null, \"version\": null}".utf8)
         var version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version.versionNumberOrRevision)", "abc")
 
-        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"1.2.3\"}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"1.2.3\"}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version.versionNumberOrRevision)", "1.2.3")
     }

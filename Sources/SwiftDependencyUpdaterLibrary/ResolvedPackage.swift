@@ -78,7 +78,7 @@ struct ResolvedPackage: Decodable {
         do {
             return try decoder.decode(Wrapper.self, from: data).object
         } catch {
-            throw ResolvedPackageError.parsingFailed(error.localizedDescription, String(decoding: data, as: UTF8.self))
+            throw ResolvedPackageError.parsingFailed(error.localizedDescription, String(bytes: data, encoding: .utf8) ?? "")
         }
     }
 

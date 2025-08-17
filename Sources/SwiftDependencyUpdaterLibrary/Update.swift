@@ -25,20 +25,17 @@ enum Update: Equatable {
                     }
                     if update.newVersion > latestRelease {
                         throw UpdateError.updatedVersionNotFound(name, update.newVersion, latestRelease)
-                    } else {
-                        return .withoutChangingRequirements(update.newVersion)
                     }
-                } else {
-                    return .withChangingRequirements(latestRelease)
+                    return .withoutChangingRequirements(update.newVersion)
                 }
-            } else {
-                throw UpdateError.resolvedVersionNotFound(name, currentVersion, latestRelease)
+                return .withChangingRequirements(latestRelease)
             }
-        } else if let update = swiftPackageUpdate {
-            return .withoutChangingRequirements(update.newVersion)
-        } else {
-            return nil
+            throw UpdateError.resolvedVersionNotFound(name, currentVersion, latestRelease)
         }
+        if let update = swiftPackageUpdate {
+            return .withoutChangingRequirements(update.newVersion)
+        }
+        return nil
     }
 
     func execute(for dependency: Dependency, in folder: URL) throws {
