@@ -41,7 +41,7 @@ class ResolvedPackageTests: XCTestCase {
                 return
             }
             if case let .resolvingFailed(errorMessage) = error {
-                XCTAssert(errorMessage.contains("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue"),
+                XCTAssert(errorMessage.contains("Package.resolved file is corrupted or malformed; fix or delete the file to continue"),
                           "Received error message \(errorMessage) does not contain expected error")
             } else {
                 XCTFail("Received errors is not of type resolvingFailed: \(error)")
