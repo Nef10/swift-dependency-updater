@@ -34,7 +34,7 @@ struct GitHubCommand: ParsableCommand {
                 try git.backToBaseBranch()
             } catch let SwiftPackageError.resultCountMismatch(name, count) where count == 0 { // false positive, count is an integer swiftlint:disable:this empty_count
                 print("Warning: Could not find version requirement for \(name) in Package.swift - " +
-                      "this could be due to the dependency only beeing required on a specific platform.".yellow)
+                      "this could be due to the dependency only beeing required on a specific platform, or because it it an indirect dependency.".yellow)
             } catch {
                 throw error
             }
