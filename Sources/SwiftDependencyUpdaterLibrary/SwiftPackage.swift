@@ -24,7 +24,7 @@ struct SwiftPackage {
         url = folder.appendingPathComponent("Package.swift", isDirectory: false)
     }
 
-    func performUpdate(_ update: Update, of dependency: Dependency) throws -> Bool {
+    func performUpdate(_ update: Update, of dependency: Dependency) throws -> Bool { // swiftlint:disable:this function_body_length
         guard case var .withChangingRequirements(updatedVersion) = update else {
             throw SwiftPackageError.invalidUpdate(dependency.name, update)
         }
