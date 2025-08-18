@@ -5,7 +5,15 @@ import FoundationNetworking
 import Rainbow
 
 protocol URLSessionProvider {
+#if canImport(FoundationNetworking)
+    func myUploadTask(
+        with request: URLRequest,
+        from bodyData: Data?,
+        completionHandler: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void
+    ) -> URLSessionUploadTaskProvider
+#else
     func myUploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionUploadTaskProvider
+#endif
 }
 
 protocol URLSessionUploadTaskProvider {
