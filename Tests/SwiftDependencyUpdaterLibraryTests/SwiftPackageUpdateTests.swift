@@ -3,7 +3,7 @@ import Releases
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class SwiftPackageUpdateTests: XCTestCase {
+final class SwiftPackageUpdateTests: XCTestCase {
 
     func testSwiftPackageUpdateErrorString() {
         XCTAssertEqual("\(SwiftPackageUpdateError.loadingFailed("abc").localizedDescription)", "Could not get package update data, swift package update failed: abc")

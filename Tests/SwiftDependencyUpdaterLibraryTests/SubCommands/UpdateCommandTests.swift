@@ -1,7 +1,7 @@
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class UpdateCommandTests: XCTestCase {
+final class UpdateCommandTests: XCTestCase {
 
     func testFileInsteadOfFolder() {
         let url = emptyFileURL()

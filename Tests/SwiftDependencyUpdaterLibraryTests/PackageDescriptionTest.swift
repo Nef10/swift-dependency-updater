@@ -2,7 +2,7 @@ import Releases
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class PackageDescriptionTest: XCTestCase {
+final class PackageDescriptionTest: XCTestCase {
 
     func testEmptyFolder() {
         let folder = emptyFolderURL()

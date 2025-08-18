@@ -6,7 +6,7 @@ import ShellOut
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class GitHubTests: XCTestCase {
+final class GitHubTests: XCTestCase {
 
     private class MockURLSession: URLSessionProvider {
 

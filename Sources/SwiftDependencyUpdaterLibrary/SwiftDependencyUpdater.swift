@@ -12,6 +12,7 @@ public struct SwiftDependencyUpdater: ParsableCommand {
     )
 
     public init() {
+        // Empty initializer - no setup required
     }
 
 }

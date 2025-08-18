@@ -2,7 +2,7 @@ import ShellOut
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class GitTests: XCTestCase {
+final class GitTests: XCTestCase {
 
     func testGit() {
         let folder = emptyFolderURL()
