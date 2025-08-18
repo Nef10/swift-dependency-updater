@@ -11,8 +11,10 @@ enum SwiftPackageError: Error, Equatable {
 
 struct SwiftPackage {
 
-    // swiftlint:disable:next line_length
+    // swiftlint:disable line_length
     private static let versionRegExString = "(\\.upToNextMajor\\s*\\(\\s*from\\s*:\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*\\))|(\\.upToNextMinor\\s*\\(\\s*from\\s*:\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*\\))|(\\.exact\\s*\\(\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*\\))|(from\\s*:\\s*\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\")|(\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"\\.\\.\\.\"([0-9]*\\.[0-9]*\\.[0-9]*)\")|(\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"\\.\\.<\"([0-9]*\\.[0-9]*\\.[0-9]*)\")"
+    private static let newVersionRegExString = "(upToNextMajor:\\s*\\s*from\\s*:\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*)|(upToNextMinor:\\s*\\s*from\\s*:\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*)|(exact:\\s*\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\"\\s*)|(from:\\s*:\\s*\\s*\"([0-9]*\\.[0-9]*\\.[0-9]*)\")|(\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"\\.\\.\\.\"([0-9]*\\.[0-9]*\\.[0-9]*)\")|(\\s*\"[0-9]*\\.[0-9]*\\.[0-9]*\"\\.\\.<\"([0-9]*\\.[0-9]*\\.[0-9]*)\")"
+    // swiftlint:enable line_length
 
     private let folder: URL
     private let url: URL
@@ -30,7 +32,7 @@ struct SwiftPackage {
         var string = try read()
 
         // swiftlint:disable:next line_length
-        let regex = try NSRegularExpression(pattern: "dependencies\\s*:\\s*\\[\\s*[^\\]]*\\.package\\s*\\(\\s*url\\s*:\\s*\"\(NSRegularExpression.escapedPattern(for: dependency.url.absoluteString))\"\\s*,\\s*(\(Self.versionRegExString))", options: [.anchorsMatchLines])
+        let regex = try NSRegularExpression(pattern: "dependencies\\s*:\\s*\\[\\s*[^\\]]*\\.package\\s*\\(\\s*url\\s*:\\s*\"\(NSRegularExpression.escapedPattern(for: dependency.url.absoluteString))\"\\s*,\\s*(\(Self.newVersionRegExString)|\(Self.versionRegExString))", options: [.anchorsMatchLines])
 
         let results = string.matchingStringsWithRange(regex: regex)
         guard results.count == 1, let matches = results[safe: 0] else {
