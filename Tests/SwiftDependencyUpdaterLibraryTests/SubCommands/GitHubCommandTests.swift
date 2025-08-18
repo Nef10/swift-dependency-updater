@@ -13,7 +13,7 @@ class MockGitHub: GitHubProvider {
         self.expectedTitle = title
     }
 
-    required init(git: GitProvider, token: String, urlSession: URLSessionProvider) { // swiftlint:disable:this unavailable_function
+    required init(git _: GitProvider, token _: String, urlSession _: URLSessionProvider) { // swiftlint:disable:this unavailable_function
         fatalError("Do not call this initializer")
     }
 
@@ -49,7 +49,7 @@ class MockGit: GitProvider {
         slug = "A/B"
     }
 
-    required init(in folder: URL) throws { // swiftlint:disable:this unavailable_function
+    required init(in _: URL) throws { // swiftlint:disable:this unavailable_function
         fatalError("Do not call this initializer")
     }
 
@@ -85,17 +85,17 @@ class MockGit: GitProvider {
         createBranchExpectation.fulfill()
     }
 
-    func doesRemoteBranchExist(_ name: String) -> Bool {
+    func doesRemoteBranchExist(_: String) -> Bool {
         doesRemoteBranchExist
     }
 
-    func doesLocalBranchExist(_ name: String) -> Bool {
+    func doesLocalBranchExist(_: String) -> Bool {
         doesLocalBranchExist
     }
 
 }
 
-class GitHubCommandTests: XCTestCase {
+final class GitHubCommandTests: XCTestCase {
 
     func testFileInsteadOfFolder() {
         let url = emptyFileURL()

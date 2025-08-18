@@ -3,7 +3,7 @@ import Releases
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class DependencyTests: XCTestCase {
+final class DependencyTests: XCTestCase {
 
      func testDependencyErrorString() {
         XCTAssertEqual("\(DependencyError.loadingFailed("abc").localizedDescription)", "Could not get package data, swift package dump-package failed: abc")

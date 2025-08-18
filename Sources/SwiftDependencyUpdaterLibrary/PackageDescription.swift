@@ -150,7 +150,7 @@ struct PackageDescriptionV55: PackageDescription {
 
     private let dependencyMap: [[String: [PackageDependencyV55]]]
     var dependencies: [PackageDependency] {
-        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+        dependencyMap.flatMap(\.values).flatMap(\.self)
     }
 
 }
@@ -163,7 +163,7 @@ struct PackageDescriptionV56: PackageDescription {
 
     private let dependencyMap: [[String: [PackageDependencyV56]]]
     var dependencies: [PackageDependency] {
-        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+        dependencyMap.flatMap(\.values).flatMap(\.self)
     }
 
 }
@@ -176,7 +176,7 @@ struct PackageDescriptionV59: PackageDescription {
 
     private let dependencyMap: [[String: [PackageDependencyV59]]]
     var dependencies: [PackageDependency] {
-        dependencyMap.flatMap { $0.values.flatMap { $0 } }
+        dependencyMap.flatMap(\.values).flatMap(\.self)
     }
 
 }

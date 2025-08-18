@@ -1,7 +1,7 @@
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class CollectionTests: XCTestCase {
+final class CollectionTests: XCTestCase {
 
     func testSafeArray() {
         var array = [String]()

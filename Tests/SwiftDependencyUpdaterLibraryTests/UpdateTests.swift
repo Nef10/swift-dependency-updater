@@ -3,7 +3,7 @@ import Releases
 @testable import SwiftDependencyUpdaterLibrary
 import XCTest
 
-class UpdateTests: XCTestCase {
+final class UpdateTests: XCTestCase {
 
     func testGetUpdateEmptyVersion() {
         let swiftPackageUpdate = SwiftPackageUpdate(name: "ABC", oldVersion: try! Version(string: "0.1.2"), newVersion: try! Version(string: "1.2.3"))
