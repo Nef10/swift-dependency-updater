@@ -8,7 +8,7 @@ class ResolvedPackageTests: XCTestCase {
         let folder = emptyFolderURL()
 
         assert(
-            try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder),
+            try ResolvedPackageParser.resolveAndLoadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.resolvingFailed("error: root manifest not found"),
                 ResolvedPackageError.resolvingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
@@ -20,7 +20,7 @@ class ResolvedPackageTests: XCTestCase {
         let folder = emptyFolderURL()
 
         assert(
-            try ResolvedPackage.loadResolvedPackage(from: folder),
+            try ResolvedPackageParser.loadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file."),
                 ResolvedPackageError.readingFailed("The operation could not be completed. No such file or directory")
@@ -35,7 +35,7 @@ class ResolvedPackageTests: XCTestCase {
         let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
 
-        XCTAssertThrowsError(try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)) {
+        XCTAssertThrowsError(try ResolvedPackageParser.resolveAndLoadResolvedPackage(from: folder)) {
             guard let error = $0 as? ResolvedPackageError else {
                 XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(ResolvedPackageError.self)")
                 return
@@ -57,7 +57,7 @@ class ResolvedPackageTests: XCTestCase {
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
 
         assert(
-            try ResolvedPackage.loadResolvedPackage(from: folder),
+            try ResolvedPackageParser.loadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.parsingFailed("The data couldn’t be read because it isn’t in the correct format.", "\n"),
                 ResolvedPackageError.parsingFailed("The operation could not be completed. The data isn’t in the correct format.", "\n")
@@ -71,7 +71,7 @@ class ResolvedPackageTests: XCTestCase {
         createFile(at: resolvedFile, content: TestUtils.packageResolvedFileContent)
         let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
-        let result = try! ResolvedPackage.loadResolvedPackage(from: folder)
+        let result = try! ResolvedPackageParser.loadResolvedPackage(from: folder)
         XCTAssertEqual(result.dependencies.count, 3)
 
         XCTAssertEqual(result.dependencies[0].name, "a")
