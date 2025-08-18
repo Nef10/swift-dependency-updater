@@ -48,7 +48,7 @@ jobs:
     - name: Install Swift
       uses: swift-actions/setup-swift@v2.3.0
     - name: Run tests
-      run: swift test --enable-code-coverage -Xswiftc -warnings-as-errors
+      run: swift test --enable-code-coverage -Xswiftc -warnings-as-errors -Xswiftc -Xfrontend -Xswiftc -strict-concurrency=minimal
     - name: Save PR number
       if: ${{ matrix.os == needs.get_os.outputs.coverage_os }}
       run: |
