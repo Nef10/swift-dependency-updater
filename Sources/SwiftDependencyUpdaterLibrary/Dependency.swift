@@ -20,9 +20,7 @@ struct Dependency {
 
     var changeDescription: String {
         switch update {
-        case let .withoutChangingRequirements(version):
-            return "Bump \(name) from \(resolvedVersion.versionNumberOrRevision) to \(version)"
-        case let .withChangingRequirements(version):
+        case let .withoutChangingRequirements(version), let .withChangingRequirements(version), let .withoutRequirement(version):
             return "Bump \(name) from \(resolvedVersion.versionNumberOrRevision) to \(version)"
         default:
             return ""
@@ -52,7 +50,8 @@ struct Dependency {
                 name: resolvedDependency.name,
                 currentVersion: resolvedDependency.version.version,
                 swiftPackageUpdate: swiftPackageUpdate,
-                latestRelease: latestRelease
+                latestRelease: latestRelease,
+                requirement: packageDependency?.requirement != nil
             )
             return Self(
                 name: resolvedDependency.name,
