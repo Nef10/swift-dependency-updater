@@ -31,10 +31,15 @@ struct SwiftPackage {
 
         var string = try read()
 
-        // swiftlint:disable:next line_length
-        let regex = try NSRegularExpression(pattern: "dependencies\\s*:\\s*\\[\\s*[^\\]]*\\.package\\s*\\(\\s*url\\s*:\\s*\"\(NSRegularExpression.escapedPattern(for: dependency.url.absoluteString))\"\\s*,\\s*(\(Self.newVersionRegExString)|\(Self.versionRegExString))", options: [.anchorsMatchLines])
+        // swiftlint:disable line_length
+        let regex1 = try NSRegularExpression(pattern: "dependencies\\s*:\\s*\\[\\s*[^\\]]*\\.package\\s*\\(\\s*url\\s*:\\s*\"\(NSRegularExpression.escapedPattern(for: dependency.url.absoluteString))\"\\s*,\\s*(\(Self.versionRegExString))", options: [.anchorsMatchLines])
+        let regex2 = try NSRegularExpression(pattern: "dependencies\\s*:\\s*\\[\\s*[^\\]]*\\.package\\s*\\(\\s*url\\s*:\\s*\"\(NSRegularExpression.escapedPattern(for: dependency.url.absoluteString))\"\\s*,\\s*(\(Self.newVersionRegExString))", options: [.anchorsMatchLines])
+        // swiftlint:enable line_length
 
-        let results = string.matchingStringsWithRange(regex: regex)
+        var results = string.matchingStringsWithRange(regex: regex1)
+        if results.count != 1 {
+            results = string.matchingStringsWithRange(regex: regex2)
+        }
         guard results.count == 1, let matches = results[safe: 0] else {
             throw SwiftPackageError.resultCountMismatch(dependency.name, results.count)
         }
