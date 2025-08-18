@@ -23,7 +23,7 @@ class ResolvedPackageTests: XCTestCase {
             try ResolvedPackageParser.loadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file."),
-                ResolvedPackageError.readingFailed("The operation could not be completed. No such file or directory")
+                ResolvedPackageError.readingFailed("The operation could not be completed. The file doesn’t exist.")
             ]
         )
     }
