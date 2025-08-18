@@ -81,19 +81,9 @@ class GitHub: GitHubProvider {
 }
 
 extension URLSession: URLSessionProvider {
-#if canImport(FoundationNetworking)
-    func myUploadTask(
-        with request: URLRequest,
-        from bodyData: Data?,
-        completionHandler: @Sendable @escaping (Data?, URLResponse?, Error?) -> Void
-    ) -> URLSessionUploadTaskProvider {
-        uploadTask(with: request, from: bodyData, completionHandler: completionHandler)
-    }
-#else
     func myUploadTask(with request: URLRequest, from bodyData: Data?, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionUploadTaskProvider {
         uploadTask(with: request, from: bodyData, completionHandler: completionHandler)
     }
-#endif
 }
 
 extension URLSessionUploadTask: URLSessionUploadTaskProvider {
