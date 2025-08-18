@@ -9,19 +9,19 @@ class UpdateTests: XCTestCase {
         let swiftPackageUpdate = SwiftPackageUpdate(name: "ABC", oldVersion: try! Version(string: "0.1.2"), newVersion: try! Version(string: "1.2.3"))
         let latestRelease = try! Version(string: "0.1.2")
 
-        var result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: nil, latestRelease: nil)
+        var result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: nil, latestRelease: nil, requirement: true)
         XCTAssertEqual(result, .skipped)
-        result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: swiftPackageUpdate, latestRelease: nil)
+        result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: swiftPackageUpdate, latestRelease: nil, requirement: true)
         XCTAssertEqual(result, .skipped)
-        result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: nil, latestRelease: latestRelease)
+        result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: nil, latestRelease: latestRelease, requirement: true)
         XCTAssertEqual(result, .skipped)
-        result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease)
+        result = try! Update.getUpdate(name: "ABC", currentVersion: nil, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease, requirement: true)
         XCTAssertEqual(result, .skipped)
     }
 
     func testGetUpdateNoUpdate() {
         let version = try! Version(string: "1.2.3")
-        let result = try! Update.getUpdate(name: "ABC", currentVersion: version, swiftPackageUpdate: nil, latestRelease: nil)
+        let result = try! Update.getUpdate(name: "ABC", currentVersion: version, swiftPackageUpdate: nil, latestRelease: nil, requirement: true)
         XCTAssertNil(result)
     }
 
@@ -30,7 +30,7 @@ class UpdateTests: XCTestCase {
         let newVersion = try! Version(string: "1.2.3")
         let swiftPackageUpdate = SwiftPackageUpdate(name: "ABC", oldVersion: oldVersion, newVersion: newVersion)
 
-        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: nil)
+        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: nil, requirement: true)
         XCTAssertEqual(result, Update.withoutChangingRequirements(newVersion))
     }
 
@@ -38,7 +38,7 @@ class UpdateTests: XCTestCase {
         let oldVersion = try! Version(string: "0.1.2")
         let newVersion = try! Version(string: "1.2.3")
 
-        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: nil, latestRelease: newVersion)
+        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: nil, latestRelease: newVersion, requirement: true)
         XCTAssertEqual(result, Update.withChangingRequirements(newVersion))
     }
 
@@ -47,7 +47,7 @@ class UpdateTests: XCTestCase {
         let oldVersion = try! Version(string: "1.2.3")
 
         assert(
-            try Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: nil, latestRelease: newVersion),
+            try Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: nil, latestRelease: newVersion, requirement: true),
             throws: UpdateError.resolvedVersionNotFound("ABC", oldVersion, newVersion)
         )
     }
@@ -58,7 +58,7 @@ class UpdateTests: XCTestCase {
         let oldVersion = try! Version(string: "0.1.2")
         let swiftPackageUpdate = SwiftPackageUpdate(name: "ABC", oldVersion: oldVersion, newVersion: newVersion)
 
-        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease)
+        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease, requirement: true)
         XCTAssertEqual(result, Update.withChangingRequirements(latestRelease))
     }
 
@@ -68,7 +68,7 @@ class UpdateTests: XCTestCase {
         let oldVersion = try! Version(string: "0.1.2")
         let swiftPackageUpdate = SwiftPackageUpdate(name: "ABC", oldVersion: oldVersion, newVersion: newVersion)
 
-        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease)
+        let result = try! Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease, requirement: true)
         XCTAssertEqual(result, Update.withoutChangingRequirements(latestRelease))
     }
 
@@ -79,7 +79,7 @@ class UpdateTests: XCTestCase {
         let swiftPackageUpdate = SwiftPackageUpdate(name: "ABC", oldVersion: oldVersion, newVersion: newVersion)
 
         assert(
-            try Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease),
+            try Update.getUpdate(name: "ABC", currentVersion: oldVersion, swiftPackageUpdate: swiftPackageUpdate, latestRelease: latestRelease, requirement: true),
             throws: UpdateError.updatedVersionNotFound("ABC", newVersion, latestRelease)
         )
     }
