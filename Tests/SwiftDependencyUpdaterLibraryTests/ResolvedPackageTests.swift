@@ -8,7 +8,7 @@ class ResolvedPackageTests: XCTestCase {
         let folder = emptyFolderURL()
 
         assert(
-            try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder),
+            try ResolvedPackageParser.resolveAndLoadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.resolvingFailed("error: root manifest not found"),
                 ResolvedPackageError.resolvingFailed("error: Could not find Package.swift in this directory or any of its parent directories.")
@@ -20,10 +20,10 @@ class ResolvedPackageTests: XCTestCase {
         let folder = emptyFolderURL()
 
         assert(
-            try ResolvedPackage.loadResolvedPackage(from: folder),
+            try ResolvedPackageParser.loadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.readingFailed("The file “Package.resolved” couldn’t be opened because there is no such file."),
-                ResolvedPackageError.readingFailed("The operation could not be completed. No such file or directory")
+                ResolvedPackageError.readingFailed("The operation could not be completed. The file doesn’t exist.")
             ]
         )
     }
@@ -35,13 +35,13 @@ class ResolvedPackageTests: XCTestCase {
         let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
 
-        XCTAssertThrowsError(try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)) {
+        XCTAssertThrowsError(try ResolvedPackageParser.resolveAndLoadResolvedPackage(from: folder)) {
             guard let error = $0 as? ResolvedPackageError else {
                 XCTFail("Unexpected error type, got \(type(of: $0)) instead of \(ResolvedPackageError.self)")
                 return
             }
             if case let .resolvingFailed(errorMessage) = error {
-                XCTAssert(errorMessage.contains("error: Package.resolved file is corrupted or malformed; fix or delete the file to continue"),
+                XCTAssert(errorMessage.contains("Package.resolved file is corrupted or malformed; fix or delete the file to continue"),
                           "Received error message \(errorMessage) does not contain expected error")
             } else {
                 XCTFail("Received errors is not of type resolvingFailed: \(error)")
@@ -57,7 +57,7 @@ class ResolvedPackageTests: XCTestCase {
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
 
         assert(
-            try ResolvedPackage.loadResolvedPackage(from: folder),
+            try ResolvedPackageParser.loadResolvedPackage(from: folder),
             throws: [
                 ResolvedPackageError.parsingFailed("The data couldn’t be read because it isn’t in the correct format.", "\n"),
                 ResolvedPackageError.parsingFailed("The operation could not be completed. The data isn’t in the correct format.", "\n")
@@ -71,7 +71,7 @@ class ResolvedPackageTests: XCTestCase {
         createFile(at: resolvedFile, content: TestUtils.packageResolvedFileContent)
         let packageFile = temporaryFileURL(in: folder, name: "Package.swift")
         createFile(at: packageFile, content: TestUtils.emptyPackageSwiftFileContent)
-        let result = try! ResolvedPackage.loadResolvedPackage(from: folder)
+        let result = try! ResolvedPackageParser.loadResolvedPackage(from: folder)
         XCTAssertEqual(result.dependencies.count, 3)
 
         XCTAssertEqual(result.dependencies[0].name, "a")
@@ -96,19 +96,19 @@ class ResolvedPackageTests: XCTestCase {
     func testResolvedVersionString() {
         let decoder = JSONDecoder()
 
-        var data = "{\"revision\": \"abc\", \"branch\": null, \"version\": null}".data(using: .utf8)!
+        var data = Data("{\"revision\": \"abc\", \"branch\": null, \"version\": null}".utf8)
         var version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "abc")
 
-        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": null}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": \"main\", \"version\": null}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "abc (branch: main)")
 
-        data = "{\"revision\": \"abc\", \"branch\": null, \"version\": \"0.0.0\"}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": null, \"version\": \"0.0.0\"}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "0.0.0 (abc)")
 
-        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"0.0.0\"}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"0.0.0\"}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version)", "0.0.0 (abc, branch: main)")
     }
@@ -116,11 +116,11 @@ class ResolvedPackageTests: XCTestCase {
     func testVersionNumberOrRevision() {
         let decoder = JSONDecoder()
 
-        var data = "{\"revision\": \"abc\", \"branch\": null, \"version\": null}".data(using: .utf8)!
+        var data = Data("{\"revision\": \"abc\", \"branch\": null, \"version\": null}".utf8)
         var version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version.versionNumberOrRevision)", "abc")
 
-        data = "{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"1.2.3\"}".data(using: .utf8)!
+        data = Data("{\"revision\": \"abc\", \"branch\": \"main\", \"version\": \"1.2.3\"}".utf8)
         version = try! decoder.decode(ResolvedVersion.self, from: data)
         XCTAssertEqual("\(version.versionNumberOrRevision)", "1.2.3")
     }

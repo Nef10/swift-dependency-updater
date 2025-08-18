@@ -11,9 +11,10 @@ enum Update: Equatable {
 
     case withoutChangingRequirements(Version)
     case withChangingRequirements(Version)
+    case withoutRequirement(Version)
     case skipped
 
-    static func getUpdate(name: String, currentVersion: Version?, swiftPackageUpdate: SwiftPackageUpdate?, latestRelease: Version?) throws -> Self? {
+    static func getUpdate(name: String, currentVersion: Version?, swiftPackageUpdate: SwiftPackageUpdate?, latestRelease: Version?, requirement: Bool) throws -> Self? {
         guard let currentVersion else {
             return .skipped
         }
@@ -25,20 +26,23 @@ enum Update: Equatable {
                     }
                     if update.newVersion > latestRelease {
                         throw UpdateError.updatedVersionNotFound(name, update.newVersion, latestRelease)
-                    } else {
-                        return .withoutChangingRequirements(update.newVersion)
                     }
-                } else {
-                    return .withChangingRequirements(latestRelease)
+                    return .withoutChangingRequirements(update.newVersion)
                 }
-            } else {
-                throw UpdateError.resolvedVersionNotFound(name, currentVersion, latestRelease)
+                if !requirement {
+                    return .withoutRequirement(latestRelease)
+                }
+                return .withChangingRequirements(latestRelease)
             }
-        } else if let update = swiftPackageUpdate {
-            return .withoutChangingRequirements(update.newVersion)
-        } else {
-            return nil
+            throw UpdateError.resolvedVersionNotFound(name, currentVersion, latestRelease)
         }
+        if let update = swiftPackageUpdate {
+            if !requirement {
+                return .withoutRequirement(update.newVersion)
+            }
+            return .withoutChangingRequirements(update.newVersion)
+        }
+        return nil
     }
 
     func execute(for dependency: Dependency, in folder: URL) throws {
@@ -55,10 +59,14 @@ enum Update: Equatable {
                 try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", "resolve", ])
                 print("Resolved Version".green)
             }
-        case let .withoutChangingRequirements(version):
+        case let .withoutChangingRequirements(version), let .withoutRequirement(version):
             print("Updating \(dependency.name): \(dependency.resolvedVersion.versionNumberOrRevision) -> \(version)".bold)
             try shellOut(to: "swift", arguments: ["package", "--package-path", "\"\(folder.path)\"", "update", dependency.name, ])
-            print("Resolved to new version".green)
+            if case .withoutRequirement = self {
+                print("Tried to resolve to new version".green + " - if this is an indirect dependency with a version restriction from another dependency, it may not update.")
+            } else {
+                print("Resolved to new version".green)
+            }
         default:
             // Do nothing
             break
@@ -74,6 +82,8 @@ extension Update: CustomStringConvertible {
             return "\("\(version)".yellow) (Without changing requirements)"
         case let .withChangingRequirements(version):
             return "\("\(version)".red) (Requires changing requirements)"
+        case let .withoutRequirement(version):
+            return "\("\(version)".lightYellow) (Without requirement)"
         case .skipped:
             return "Current version is not a release version, skipping".yellow
         }

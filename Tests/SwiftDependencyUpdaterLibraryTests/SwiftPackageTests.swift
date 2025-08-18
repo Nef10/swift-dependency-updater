@@ -14,7 +14,7 @@ class SwiftPackageTests: XCTestCase {
         #if os(Linux)
         assert(
             try swiftPackage.performUpdate(update, of: dependency),
-            throws: SwiftPackageError.readFailed("The operation could not be completed. No such file or directory")
+            throws: SwiftPackageError.readFailed("The operation could not be completed. The file doesn’t exist.")
         )
         #else
         assert(

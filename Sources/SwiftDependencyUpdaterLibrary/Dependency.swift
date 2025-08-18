@@ -20,9 +20,7 @@ struct Dependency {
 
     var changeDescription: String {
         switch update {
-        case let .withoutChangingRequirements(version):
-            return "Bump \(name) from \(resolvedVersion.versionNumberOrRevision) to \(version)"
-        case let .withChangingRequirements(version):
+        case let .withoutChangingRequirements(version), let .withChangingRequirements(version), let .withoutRequirement(version):
             return "Bump \(name) from \(resolvedVersion.versionNumberOrRevision) to \(version)"
         default:
             return ""
@@ -34,14 +32,14 @@ struct Dependency {
         if packageDescription.dependencies.isEmpty {
             return []
         }
-        let resolvedPackage = try ResolvedPackage.resolveAndLoadResolvedPackage(from: folder)
+        let resolvedPackage = try ResolvedPackageParser.resolveAndLoadResolvedPackage(from: folder)
         let swiftPackageUpdates = try SwiftPackageUpdate.checkUpdates(in: folder)
         return try mergeDependencies(packageDescription: packageDescription, resolvedPackage: resolvedPackage, swiftPackageUpdates: swiftPackageUpdates)
     }
 
     private static func mergeDependencies(
         packageDescription: PackageDescription,
-        resolvedPackage: ResolvedPackage,
+        resolvedPackage: any ResolvedPackage,
         swiftPackageUpdates: [SwiftPackageUpdate]
     ) throws -> [Self] {
         try resolvedPackage.dependencies.map { resolvedDependency in
@@ -52,7 +50,8 @@ struct Dependency {
                 name: resolvedDependency.name,
                 currentVersion: resolvedDependency.version.version,
                 swiftPackageUpdate: swiftPackageUpdate,
-                latestRelease: latestRelease
+                latestRelease: latestRelease,
+                requirement: packageDependency?.requirement != nil
             )
             return Self(
                 name: resolvedDependency.name,
