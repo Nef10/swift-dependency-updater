@@ -28,7 +28,7 @@ let package = Package(
         ),
         .package(
             url: "https://github.com/onevcat/Rainbow.git",
-            .upToNextMajor(from: "4.0.0")
+            .upToNextMajor(from: "4.2.0")
         ),
         .package(
             url: "https://github.com/Nef10/Releases.git",
