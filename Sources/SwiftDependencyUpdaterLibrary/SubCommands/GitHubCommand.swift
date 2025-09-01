@@ -32,7 +32,7 @@ struct GitHubCommand: ParsableCommand {
                     try gitHub.createPullRequest(branchName: branchName, title: $0.changeDescription)
                 }
                 try git.backToBaseBranch()
-            } catch let SwiftPackageError.resultCountMismatch(name, count) where count == 0 { // false positive, count is an integer swiftlint:disable:this empty_count
+            } catch let SwiftPackageError.resultCountMismatch(name, count) where count == 0 {
                 print("Warning: Could not find version requirement for \(name) in Package.swift - " +
                       "this could be due to the dependency only beeing required on a specific platform, or because it it an indirect dependency.".yellow)
             } catch {
