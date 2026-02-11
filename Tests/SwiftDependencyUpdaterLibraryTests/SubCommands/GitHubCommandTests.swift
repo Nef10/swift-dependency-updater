@@ -17,7 +17,7 @@ class MockGitHub: GitHubProvider {
         fatalError("Do not call this initializer")
     }
 
-    func createPullRequest(branchName: String, title: String) throws {
+    func createPullRequest(branchName: String, title: String) {
         XCTAssertEqual(branchName, expectedBranchName)
         XCTAssertEqual(title, expectedTitle)
         expectation?.fulfill()
@@ -49,36 +49,36 @@ class MockGit: GitProvider {
         slug = "A/B"
     }
 
-    required init(in _: URL) throws { // swiftlint:disable:this unavailable_function
+    required init(in _: URL) { // swiftlint:disable:this unavailable_function
         fatalError("Do not call this initializer")
     }
 
-    func backToBaseBranch() throws {
+    func backToBaseBranch() {
         backToBaseBranchExpectation.fulfill()
     }
 
-    func commit(message: String) throws {
+    func commit(message: String) {
         if let expectedCommitMessage {
             XCTAssertEqual(expectedCommitMessage, message)
         }
         commitExpectation.fulfill()
     }
 
-    func pushBranch(name: String) throws {
+    func pushBranch(name: String) {
         if let expectedBranchName {
             XCTAssertEqual(expectedBranchName, name)
         }
         pushBranchExpectation.fulfill()
     }
 
-    func removeLocalBranch(name: String) throws {
+    func removeLocalBranch(name: String) {
         if let expectedBranchName {
             XCTAssertEqual(expectedBranchName, name)
         }
         removeLocalBranchExpectation.fulfill()
     }
 
-    func createBranch(name: String) throws {
+    func createBranch(name: String) {
         if let expectedBranchName {
             XCTAssertEqual(expectedBranchName, name)
         }
