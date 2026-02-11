@@ -46,7 +46,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v6
     - name: Install Swift
-      uses: swift-actions/setup-swift@v2.4.0
+      uses: swift-actions/setup-swift@v3.0.0-beta.1
+      with:
+        skip-verify-signature: ${{ matrix.os == 'ubuntu-latest' }}
     - name: Run tests
       run: swift test --enable-code-coverage -Xswiftc -warnings-as-errors
     - name: Save PR number
@@ -82,11 +84,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
       - name: Install Swift
-        uses: swift-actions/setup-swift@v2.4.0
+        uses: swift-actions/setup-swift@v3.0.0-beta.1
+        with:
+          skip-verify-signature: true
       - name: Install SwiftLint
         run: |
           curl -L https://github.com/realm/SwiftLint/releases/download/0.62.1/swiftlint_linux_amd64.zip -o swiftlint.zip
           unzip swiftlint.zip -d swiftlint
           ./swiftlint/swiftlint --version
       - name: Run SwiftLint
-        run: ./swiftlint/swiftlint --strict --reporter github-actions-logging
+        run: LINUX_SOURCEKIT_LIB_PATH=$(swiftly use --print-location)/usr/lib ./swiftlint/swiftlint --strict --reporter github-actions-logging
