@@ -40,7 +40,7 @@ struct SwiftPackageUpdate {
     }
 
     private static func parseOutput(_ output: String) throws -> [Self] {
-        let numberMatches = output.matchingStrings(regex: self.numberRegex)
+        let numberMatches = output.matchingStrings(regex: numberRegex)
         guard
             let match = numberMatches[safe: 0],
             let numberString = match[safe: 1],
@@ -48,7 +48,7 @@ struct SwiftPackageUpdate {
         else {
             throw SwiftPackageUpdateError.parsingNumberFailed(output)
         }
-        let dependencyMatches = output.matchingStrings(regex: self.dependencyRegex)
+        let dependencyMatches = output.matchingStrings(regex: dependencyRegex)
         guard dependencyMatches.count == number else {
             throw SwiftPackageUpdateError.parsingNumberMismatch(output, number, dependencyMatches.count)
         }

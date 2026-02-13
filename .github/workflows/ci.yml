@@ -89,7 +89,7 @@ jobs:
           skip-verify-signature: true
       - name: Install SwiftLint
         run: |
-          curl -L https://github.com/realm/SwiftLint/releases/download/0.62.1/swiftlint_linux_amd64.zip -o swiftlint.zip
+          curl -L https://github.com/realm/SwiftLint/releases/download/0.63.2/swiftlint_linux_amd64.zip -o swiftlint.zip
           unzip swiftlint.zip -d swiftlint
           ./swiftlint/swiftlint --version
       - name: Run SwiftLint
