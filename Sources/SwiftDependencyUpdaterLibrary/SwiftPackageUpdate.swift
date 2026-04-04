@@ -12,8 +12,9 @@ enum SwiftPackageUpdateError: Error, Equatable {
 struct SwiftPackageUpdate {
 
     private static let numberRegex: NSRegularExpression = {
+        // Matches both old format ("N dependencies have changed.") and new format ("[Dry-run] N dependencies would change.")
         // swiftlint:disable:next force_try
-        try! NSRegularExpression(pattern: "^([0-9]+) dependenc(y|ies) ha(s|ve) changed(.|:)$", options: [.anchorsMatchLines])
+        try! NSRegularExpression(pattern: "^(?:\\[Dry-run\\] )?([0-9]+) dependenc(y|ies) (?:ha(?:s|ve) changed|would change)(.|:)$", options: [.anchorsMatchLines])
     }()
 
     private static let dependencyRegex: NSRegularExpression = {
