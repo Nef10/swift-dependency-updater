@@ -40,7 +40,7 @@ struct SwiftPackageUpdate {
         }
     }
 
-    private static func parseOutput(_ output: String) throws -> [Self] {
+    static func parseOutput(_ output: String) throws -> [Self] {
         let numberMatches = output.matchingStrings(regex: numberRegex)
         guard
             let match = numberMatches[safe: 0],

@@ -44,4 +44,63 @@ final class SwiftPackageUpdateTests: XCTestCase {
         XCTAssert(try! SwiftPackageUpdate.checkUpdates(in: folder).isEmpty)
     }
 
+    func testParseOutputOldFormatNoUpdates() {
+        let output = "0 dependencies have changed."
+        XCTAssert(try! SwiftPackageUpdate.parseOutput(output).isEmpty)
+    }
+
+    func testParseOutputOldFormatSingleUpdate() {
+        let output = "1 dependency has changed:\n~ mypackage 1.0.0 -> mypackage 1.1.0"
+        let result = try! SwiftPackageUpdate.parseOutput(output)
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result[0].name, "mypackage")
+        XCTAssertEqual(result[0].oldVersion, try! Version(string: "1.0.0"))
+        XCTAssertEqual(result[0].newVersion, try! Version(string: "1.1.0"))
+    }
+
+    func testParseOutputOldFormatMultipleUpdates() {
+        let output = "2 dependencies have changed:\n~ packageA 1.0.0 -> packageA 1.1.0\n~ packageB 2.0.0 -> packageB 2.3.0"
+        let result = try! SwiftPackageUpdate.parseOutput(output)
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result[0].name, "packageA")
+        XCTAssertEqual(result[0].oldVersion, try! Version(string: "1.0.0"))
+        XCTAssertEqual(result[0].newVersion, try! Version(string: "1.1.0"))
+        XCTAssertEqual(result[1].name, "packageB")
+        XCTAssertEqual(result[1].oldVersion, try! Version(string: "2.0.0"))
+        XCTAssertEqual(result[1].newVersion, try! Version(string: "2.3.0"))
+    }
+
+    func testParseOutputNewFormatNoUpdates() {
+        let output = "[Dry-run] 0 dependencies would change."
+        XCTAssert(try! SwiftPackageUpdate.parseOutput(output).isEmpty)
+    }
+
+    func testParseOutputNewFormatSingleUpdate() {
+        let output = "[Dry-run] 1 dependency would change:\n~ mypackage 1.0.0 -> mypackage 1.1.0"
+        let result = try! SwiftPackageUpdate.parseOutput(output)
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result[0].name, "mypackage")
+        XCTAssertEqual(result[0].oldVersion, try! Version(string: "1.0.0"))
+        XCTAssertEqual(result[0].newVersion, try! Version(string: "1.1.0"))
+    }
+
+    func testParseOutputNewFormatMultipleUpdates() {
+        let output = "[Dry-run] 2 dependencies would change:\n~ packageA 1.0.0 -> packageA 1.1.0\n~ packageB 2.0.0 -> packageB 2.3.0"
+        let result = try! SwiftPackageUpdate.parseOutput(output)
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result[0].name, "packageA")
+        XCTAssertEqual(result[0].oldVersion, try! Version(string: "1.0.0"))
+        XCTAssertEqual(result[0].newVersion, try! Version(string: "1.1.0"))
+        XCTAssertEqual(result[1].name, "packageB")
+        XCTAssertEqual(result[1].oldVersion, try! Version(string: "2.0.0"))
+        XCTAssertEqual(result[1].newVersion, try! Version(string: "2.3.0"))
+    }
+
+    func testParseOutputInvalidFormat() {
+        assert(
+            try SwiftPackageUpdate.parseOutput("something unexpected"),
+            throws: SwiftPackageUpdateError.parsingNumberFailed("something unexpected")
+        )
+    }
+
 }
