@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Check and output correct matrix
       id: output_data
       run: |
@@ -42,7 +42,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
     - name: Install Swift
       uses: swift-actions/setup-swift@v3.0.0-beta.1
       with:
@@ -80,7 +80,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
       - name: Install Swift
         uses: swift-actions/setup-swift@v3.0.0-beta.1
         with:
